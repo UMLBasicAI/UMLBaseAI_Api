@@ -17,8 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FeatAuthenticate", "FeatAut
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignUp", "Src\Core\FeatAuthenticate\SignUp\SignUp.csproj", "{B810C46F-D079-48D1-8712-D2A6CFB7EA84}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Template", "Template", "{C8C60E0E-72AB-469D-BC71-0DBDCC54167D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignIn", "Src\Core\FeatAuthenticate\SignIn\SignIn.csproj", "{8FF2DCD9-BE87-42F6-8C6F-57C7CE9D04A1}"
 EndProject
 Global

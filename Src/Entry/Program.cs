@@ -8,9 +8,19 @@ Console.OutputEncoding = Encoding.UTF8;
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-var builder = WebApplication.CreateBuilder(args);
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+
+var builder = WebApplication.CreateBuilder(
+    new WebApplicationOptions { Args = args, EnvironmentName = environment }
+);
 var service = builder.Services;
 var configuration = builder.Configuration;
+
+configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: true)
+    .AddJsonFile($"appsettings.{environment}.json", optional: true)
+    .AddEnvironmentVariables();
 
 service.RegisterRequireServices(configuration);
 

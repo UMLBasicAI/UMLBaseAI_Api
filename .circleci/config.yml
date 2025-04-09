@@ -1,0 +1,67 @@
+﻿version: 2.1
+
+executors:
+  dotnet-executor:
+    docker:
+      - image: mcr.microsoft.com/dotnet/sdk:8.0
+    working_directory: ~/project
+
+jobs:
+  build:
+    executor: dotnet-executor
+    steps:
+      - checkout
+
+      - run:
+          name: Restore dependencies
+          command: dotnet restore Src/Entry/Entry.csproj
+
+      - run:
+          name: Build entry project
+          command: dotnet build Src/Entry/Entry.csproj --configuration Release --no-restore
+
+      - run:
+          name: Run tests (nếu có)
+          command: echo "No tests defined - skip or add here"
+
+      - run:
+          name: Publish app
+          command: dotnet publish Src/Entry/Entry.csproj -c Release -o ./publish --self-contained false
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - publish
+
+  deploy:
+    executor: dotnet-executor
+    steps:
+      - attach_workspace:
+          at: ~/project
+
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:tAU0OGff3IHLy0PV3JrdjtizXfq4bAKblpidItk5Clk" 
+
+      - run:
+          name: Install SCP
+          command: | 
+              apt-get update && apt-get install -y openssh-client
+
+      - run:
+            name: Deploy to Azure VPS
+            command: |
+              ssh -o StrictHostKeyChecking=no vuvudev@20.2.88.32 "mkdir -p /home/vuvudev/apps/umlbasicaiapi/production"
+              scp -o StrictHostKeyChecking=no -r ./publish/* vuvudev@20.2.88.32:/home/vuvudev/apps/umlbasicaiapi/production
+              ssh -o StrictHostKeyChecking=no vuvudev@20.2.88.32 "sudo systemctl daemon-reload"
+              ssh -o StrictHostKeyChecking=no vuvudev@20.2.88.32 "sudo systemctl restart umlbasicaiapi"
+              ssh -o StrictHostKeyChecking=no vuvudev@20.2.88.32 "sudo systemctl status umlbasicaiapi --no-pager"
+
+
+workflows:
+  build-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
