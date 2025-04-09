@@ -44,6 +44,11 @@ jobs:
             - "SHA256:tAU0OGff3IHLy0PV3JrdjtizXfq4bAKblpidItk5Clk" 
 
       - run:
+          name: Install SCP
+          command: | 
+              apt-get update && apt-get install -y openssh-client
+
+      - run:
            name: Deploy to Azure VPS
            command: |
               scp -r ./publish/* vuvudev@20.2.88.32:/home/vuvudev/apps/umlbasicaiapi/production
