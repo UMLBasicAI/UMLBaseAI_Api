@@ -14,11 +14,11 @@ jobs:
 
       - run:
           name: Restore dependencies
-          command: dotnet restore entry/entry.csproj
+          command: dotnet restore Entry/Entry.csproj
 
       - run:
           name: Build entry project
-          command: dotnet build entry/entry.csproj --configuration Release --no-restore
+          command: dotnet build Entry/Entry.csproj --configuration Release --no-restore
 
       - run:
           name: Run tests (nếu có)
