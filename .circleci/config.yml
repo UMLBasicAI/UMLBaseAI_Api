@@ -51,10 +51,12 @@ jobs:
       - run:
             name: Deploy to Azure VPS
             command: |
+              ssh -o StrictHostKeyChecking=no vuvudev@20.2.88.32 "mkdir -p /home/vuvudev/apps/umlbasicaiapi/production"
               scp -o StrictHostKeyChecking=no -r ./publish/* vuvudev@20.2.88.32:/home/vuvudev/apps/umlbasicaiapi/production
               ssh -o StrictHostKeyChecking=no vuvudev@20.2.88.32 "sudo systemctl daemon-reload"
               ssh -o StrictHostKeyChecking=no vuvudev@20.2.88.32 "sudo systemctl restart umlbasicaiapi"
               ssh -o StrictHostKeyChecking=no vuvudev@20.2.88.32 "sudo systemctl status umlbasicaiapi --no-pager"
+
 
 workflows:
   build-deploy:
