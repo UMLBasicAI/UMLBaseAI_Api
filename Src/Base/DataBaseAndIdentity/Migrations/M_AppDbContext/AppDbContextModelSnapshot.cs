@@ -17,7 +17,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("myspace")
+                .HasDefaultSchema("uml_base_ai")
                 .HasAnnotation("Npgsql:CollationDefinition:case_insensitive", "en-u-ks-primary,en-u-ks-primary,icu,False")
                 .HasAnnotation("ProductVersion", "9.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
@@ -49,7 +49,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
                     b.HasKey("Id");
 
-                    b.ToTable("additional_user_information", "myspace");
+                    b.ToTable("additional_user_information", "uml_base_ai");
                 });
 
             modelBuilder.Entity("Base.DataBaseAndIdentity.Entities.IdentityRoleEntity", b =>
@@ -76,7 +76,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", "myspace");
+                    b.ToTable("AspNetRoles", "uml_base_ai");
                 });
 
             modelBuilder.Entity("Base.DataBaseAndIdentity.Entities.IdentityUserEntity", b =>
@@ -141,7 +141,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("user", "myspace");
+                    b.ToTable("user", "uml_base_ai");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -161,7 +161,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
                     b.HasKey("Id");
 
-                    b.ToTable("role", "myspace");
+                    b.ToTable("role", "uml_base_ai");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -185,7 +185,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("role_claim", "myspace");
+                    b.ToTable("role_claim", "uml_base_ai");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
@@ -209,7 +209,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("user_claim", "myspace");
+                    b.ToTable("user_claim", "uml_base_ai");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
@@ -230,7 +230,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("user_login", "myspace");
+                    b.ToTable("user_login", "uml_base_ai");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
@@ -245,7 +245,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("user_role", "myspace");
+                    b.ToTable("user_role", "uml_base_ai");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -269,7 +269,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("user_token", "myspace");
+                    b.ToTable("user_token", "uml_base_ai");
 
                     b.HasDiscriminator().HasValue("IdentityUserToken<Guid>");
 

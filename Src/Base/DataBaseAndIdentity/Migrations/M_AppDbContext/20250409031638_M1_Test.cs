@@ -13,14 +13,14 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "myspace");
+                name: "uml_base_ai");
 
             migrationBuilder.AlterDatabase()
                 .Annotation("Npgsql:CollationDefinition:case_insensitive", "en-u-ks-primary,en-u-ks-primary,icu,False");
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
-                schema: "myspace",
+                schema: "uml_base_ai",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -35,7 +35,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
             migrationBuilder.CreateTable(
                 name: "role",
-                schema: "myspace",
+                schema: "uml_base_ai",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -50,7 +50,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
             migrationBuilder.CreateTable(
                 name: "user",
-                schema: "myspace",
+                schema: "uml_base_ai",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -76,7 +76,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
             migrationBuilder.CreateTable(
                 name: "role_claim",
-                schema: "myspace",
+                schema: "uml_base_ai",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -91,7 +91,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     table.ForeignKey(
                         name: "FK_role_claim_AspNetRoles_RoleId",
                         column: x => x.RoleId,
-                        principalSchema: "myspace",
+                        principalSchema: "uml_base_ai",
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -99,7 +99,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
             migrationBuilder.CreateTable(
                 name: "additional_user_information",
-                schema: "myspace",
+                schema: "uml_base_ai",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -114,14 +114,14 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     table.ForeignKey(
                         name: "FK_additional_user_information_user_Id",
                         column: x => x.Id,
-                        principalSchema: "myspace",
+                        principalSchema: "uml_base_ai",
                         principalTable: "user",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "user_claim",
-                schema: "myspace",
+                schema: "uml_base_ai",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -136,7 +136,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     table.ForeignKey(
                         name: "FK_user_claim_user_UserId",
                         column: x => x.UserId,
-                        principalSchema: "myspace",
+                        principalSchema: "uml_base_ai",
                         principalTable: "user",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -144,7 +144,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
             migrationBuilder.CreateTable(
                 name: "user_login",
-                schema: "myspace",
+                schema: "uml_base_ai",
                 columns: table => new
                 {
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
@@ -158,7 +158,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     table.ForeignKey(
                         name: "FK_user_login_user_UserId",
                         column: x => x.UserId,
-                        principalSchema: "myspace",
+                        principalSchema: "uml_base_ai",
                         principalTable: "user",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -166,7 +166,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
             migrationBuilder.CreateTable(
                 name: "user_role",
-                schema: "myspace",
+                schema: "uml_base_ai",
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -178,14 +178,14 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     table.ForeignKey(
                         name: "FK_user_role_AspNetRoles_RoleId",
                         column: x => x.RoleId,
-                        principalSchema: "myspace",
+                        principalSchema: "uml_base_ai",
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_user_role_user_UserId",
                         column: x => x.UserId,
-                        principalSchema: "myspace",
+                        principalSchema: "uml_base_ai",
                         principalTable: "user",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -193,13 +193,15 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
             migrationBuilder.CreateTable(
                 name: "user_token",
-                schema: "myspace",
+                schema: "uml_base_ai",
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Value = table.Column<string>(type: "text", nullable: true)
+                    Value = table.Column<string>(type: "text", nullable: true),
+                    Discriminator = table.Column<string>(type: "character varying(34)", maxLength: 34, nullable: false),
+                    expire_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -207,7 +209,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     table.ForeignKey(
                         name: "FK_user_token_user_UserId",
                         column: x => x.UserId,
-                        principalSchema: "myspace",
+                        principalSchema: "uml_base_ai",
                         principalTable: "user",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -215,45 +217,45 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
-                schema: "myspace",
+                schema: "uml_base_ai",
                 table: "AspNetRoles",
                 column: "NormalizedName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_role_claim_RoleId",
-                schema: "myspace",
+                schema: "uml_base_ai",
                 table: "role_claim",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
-                schema: "myspace",
+                schema: "uml_base_ai",
                 table: "user",
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
-                schema: "myspace",
+                schema: "uml_base_ai",
                 table: "user",
                 column: "NormalizedUserName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_user_claim_UserId",
-                schema: "myspace",
+                schema: "uml_base_ai",
                 table: "user_claim",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_user_login_UserId",
-                schema: "myspace",
+                schema: "uml_base_ai",
                 table: "user_login",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_user_role_RoleId",
-                schema: "myspace",
+                schema: "uml_base_ai",
                 table: "user_role",
                 column: "RoleId");
         }
@@ -263,39 +265,39 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
         {
             migrationBuilder.DropTable(
                 name: "additional_user_information",
-                schema: "myspace");
+                schema: "uml_base_ai");
 
             migrationBuilder.DropTable(
                 name: "role",
-                schema: "myspace");
+                schema: "uml_base_ai");
 
             migrationBuilder.DropTable(
                 name: "role_claim",
-                schema: "myspace");
+                schema: "uml_base_ai");
 
             migrationBuilder.DropTable(
                 name: "user_claim",
-                schema: "myspace");
+                schema: "uml_base_ai");
 
             migrationBuilder.DropTable(
                 name: "user_login",
-                schema: "myspace");
+                schema: "uml_base_ai");
 
             migrationBuilder.DropTable(
                 name: "user_role",
-                schema: "myspace");
+                schema: "uml_base_ai");
 
             migrationBuilder.DropTable(
                 name: "user_token",
-                schema: "myspace");
+                schema: "uml_base_ai");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles",
-                schema: "myspace");
+                schema: "uml_base_ai");
 
             migrationBuilder.DropTable(
                 name: "user",
-                schema: "myspace");
+                schema: "uml_base_ai");
         }
     }
 }
