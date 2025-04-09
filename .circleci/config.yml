@@ -1,4 +1,4 @@
-version: 2.1
+﻿version: 2.1
 
 executors:
   dotnet-executor:
@@ -21,7 +21,7 @@ jobs:
           command: dotnet build entry/entry.csproj --configuration Release --no-restore
 
       - run:
-          name: Run tests (n?u c�)
+          name: Run tests (nếu có)
           command: echo "No tests defined - skip or add here"
 
       - run:
@@ -44,15 +44,12 @@ jobs:
             - "SHA256:tAU0OGff3IHLy0PV3JrdjtizXfq4bAKblpidItk5Clk" 
 
       - run:
-          name: Deploy to Azure VPS
-          command: |
-            scp -r ./publish/* vuvudev@20.2.88.32:/home/vuvudev/apps/umlbasicaiapi/production
-            ssh vuvudev@20.2.88.32 << 'EOF'
-              sudo systemctl daemon-reload
-              sudo systemctl restart umlbasicaiapi
-              sudo systemctl status umlbasicaiapi --no-pager
-            EOF
-
+           name: Deploy to Azure VPS
+           command: |
+              scp -r ./publish/* vuvudev@20.2.88.32:/home/vuvudev/apps/umlbasicaiapi/production
+              ssh vuvudev@20.2.88.32 "sudo systemctl daemon-reload"
+              ssh vuvudev@20.2.88.32 "sudo systemctl restart umlbasicaiapi"
+              ssh vuvudev@20.2.88.32 "sudo systemctl status umlbasicaiapi --no-pager"
 workflows:
   build-deploy:
     jobs:
