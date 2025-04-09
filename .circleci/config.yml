@@ -49,12 +49,13 @@ jobs:
               apt-get update && apt-get install -y openssh-client
 
       - run:
-           name: Deploy to Azure VPS
-           command: |
-              scp -r ./publish/* vuvudev@20.2.88.32:/home/vuvudev/apps/umlbasicaiapi/production
-              ssh vuvudev@20.2.88.32 "sudo systemctl daemon-reload"
-              ssh vuvudev@20.2.88.32 "sudo systemctl restart umlbasicaiapi"
-              ssh vuvudev@20.2.88.32 "sudo systemctl status umlbasicaiapi --no-pager"
+            name: Deploy to Azure VPS
+            command: |
+              scp -o StrictHostKeyChecking=no -r ./publish/* vuvudev@20.2.88.32:/home/vuvudev/apps/umlbasicaiapi/production
+              ssh -o StrictHostKeyChecking=no vuvudev@20.2.88.32 "sudo systemctl daemon-reload"
+              ssh -o StrictHostKeyChecking=no vuvudev@20.2.88.32 "sudo systemctl restart umlbasicaiapi"
+              ssh -o StrictHostKeyChecking=no vuvudev@20.2.88.32 "sudo systemctl status umlbasicaiapi --no-pager"
+
 workflows:
   build-deploy:
     jobs:
