@@ -14,11 +14,11 @@ jobs:
 
       - run:
           name: Restore dependencies
-          command: dotnet restore Entry/Entry.csproj
+          command: dotnet restore Src/Entry/Entry.csproj
 
       - run:
           name: Build entry project
-          command: dotnet build Entry/Entry.csproj --configuration Release --no-restore
+          command: dotnet build Src/Entry/Entry.csproj --configuration Release --no-restore
 
       - run:
           name: Run tests (nếu có)
@@ -26,7 +26,7 @@ jobs:
 
       - run:
           name: Publish app
-          command: dotnet publish entry/entry.csproj -c Release -o ./publish --self-contained false
+          command: dotnet publish Src/Entry/Entry.csproj -c Release -o ./publish --self-contained false
 
       - persist_to_workspace:
           root: .
