@@ -8,7 +8,7 @@ internal static class AppServiceRegisterationCenter
 {
     private static readonly Type ServiceRegisterType = typeof(IServiceRegister);
 
-    internal static async Task<IServiceCollection> RegisterRequireServices(
+    internal static IServiceCollection RegisterRequireServices(
         this IServiceCollection services,
         IConfiguration configuration
     )
@@ -18,7 +18,7 @@ internal static class AppServiceRegisterationCenter
         //Base service registry
         services = Base.RegistrationCenter.Register(services, configuration);
         //Core services registry
-        var registeredAssemblyNames = await GetListOfRegisteredAssemblyNameAsync();
+        var registeredAssemblyNames = GetListOfRegisteredAssemblyNameAsync(configuration);
         services = RegisterAssemblyByName(registeredAssemblyNames!, services, configuration);
         return services;
     }
@@ -69,32 +69,13 @@ internal static class AppServiceRegisterationCenter
         return services;
     }
 
-    private static async Task<IEnumerable<string?>> GetListOfRegisteredAssemblyNameAsync()
+    private static IEnumerable<string?> GetListOfRegisteredAssemblyNameAsync(
+        IConfiguration configuration
+    )
     {
-        const string CsprojFile = "Entry.csproj";
-        const string ProjectReferenceNode = "ProjectReference";
-        const string IncludeAttribute = "Include";
-
-        var fullFilePath = Path.GetFullPath(CsprojFile);
-        var doesFileExist = File.Exists(fullFilePath);
-        if (!doesFileExist)
-        {
-            throw new ApplicationException("Missing entry csproj !!");
-        }
-
-        using var stream = new FileStream(
-            fullFilePath,
-            FileMode.Open,
-            FileAccess.Read,
-            FileShare.ReadWrite
-        );
-
-        var doc = await XDocument.LoadAsync(stream, LoadOptions.None, CancellationToken.None);
-        var projectNames = doc.Descendants(ProjectReferenceNode)
-            .Select(proRef =>
-                Path.GetFileNameWithoutExtension(proRef.Attribute(IncludeAttribute)?.Value)
-            );
-
-        return projectNames;
+        var options = configuration
+            .GetRequiredSection("ProjectReferences")
+            .Get<IEnumerable<string>>();
+        return options;
     }
 }

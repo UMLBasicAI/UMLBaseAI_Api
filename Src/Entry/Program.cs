@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 var service = builder.Services;
 var configuration = builder.Configuration;
 
-await service.RegisterRequireServices(configuration);
+service.RegisterRequireServices(configuration);
 
 var app = builder.Build();
 
@@ -28,18 +28,16 @@ await using (var scope = app.Services.CreateAsyncScope())
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseRouting()
-        .UseCors()
-        .UseAuthentication()
-        .UseAuthorization()
-        .UseOpenApi()
-        .UseSwaggerUi(options =>
-        {
-            options.Path = string.Empty;
-            options.DefaultModelsExpandDepth = -1;
-        });
-    app.MapControllers();
-}
+app.UseRouting()
+    .UseCors()
+    .UseAuthentication()
+    .UseAuthorization()
+    .UseOpenApi()
+    .UseSwaggerUi(options =>
+    {
+        options.Path = string.Empty;
+        options.DefaultModelsExpandDepth = -1;
+    });
+app.MapControllers();
+
 await app.RunAsync(CancellationToken.None);
