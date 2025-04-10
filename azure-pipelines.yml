@@ -1,34 +1,58 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
-trigger:
+﻿trigger:
 - main
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'ubuntu-latest'
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  projectPath: 'Src/Entry/Entry.csproj'
+  publishDir: '$(Build.ArtifactStagingDirectory)/publish'
 
 steps:
-- task: NuGetToolInstaller@1
+  # 1. Fetch full history
+  - checkout: self
+    fetchDepth: 0
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
+  # 2. Cài .NET SDK (nếu cần)
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '8.0.x'
+      installationPath: $(Agent.ToolsDirectory)/dotnet
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+  # 3. Restore
+  - script: dotnet restore $(projectPath)
+    displayName: 'Restore Dependencies'
 
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+  # 4. Build
+  - script: dotnet build $(projectPath) --configuration $(buildConfiguration) --no-restore
+    displayName: 'Build Project'
+
+  # 5. Publish
+  - script: dotnet publish $(projectPath) --configuration $(buildConfiguration) --output $(publishDir) --no-restore --self-contained false
+    displayName: 'Publish Project'
+
+  # 6. SSH Deploy to VPS
+  - task: InstallSSHKey@0
+    inputs:
+      knownHostsEntry: '20.2.88.32'
+      sshPublicKey: '$(sshPublicKey)' # hoặc không cần nếu dùng password auth
+      sshKeySecureFile: 'vps-private-key.pem' # Tên file SSH key đã upload lên Azure
+      passphrase: '' # nếu không có pass
+
+  - task: CopyFilesOverSSH@0
+    inputs:
+      sshEndpoint: 'UMLVPS' # service connection đã tạo
+      sourceFolder: '$(publishDir)'
+      contents: '**'
+      targetFolder: '/home/vuvudev/apps/umlbasicaiapi/production'
+
+  - task: SSH@0
+    inputs:
+      sshEndpoint: 'UMLVPS'
+      runOptions: 'commands'
+      commands: |
+        sudo systemctl daemon-reload
+        sudo systemctl restart umlbasicaiapi
+        sudo systemctl status umlbasicaiapi --no-pager
