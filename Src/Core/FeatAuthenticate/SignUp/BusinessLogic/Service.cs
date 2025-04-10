@@ -71,7 +71,7 @@ public sealed class Service : IServiceHandler<AppRequestModel, AppResponseModel>
             Id = Guid.NewGuid(),
             Email = request.Email,
             Password = request.Password,
-            IsEmailConfirmed = false,
+            IsEmailConfirmed = true,
             AdditionalUserInfor = new UserInformationModal.AdditionalUserInforModel
             {
                 FirstName = string.Empty,
