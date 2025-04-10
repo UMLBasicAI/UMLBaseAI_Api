@@ -5,7 +5,7 @@ namespace SignIn.Common;
 public static class Constant
 {
     public const string CONTROLLER_NAME = "Authentication Endpoints";
-    public const string ENDPOINT_PATH = "Login";
+    public const string ENDPOINT_PATH = "SignIn";
     public const string REQUEST_ARGUMENT_NAME = "request";
 
     public static class APP_USER_REFRESH_TOKEN

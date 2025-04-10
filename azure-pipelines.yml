@@ -14,12 +14,14 @@ steps:
     fetchDepth: 0
 
   - task: UseDotNet@2
+  displayName: 'Use .NET Core SDK 8.0.x'
     inputs:
       packageType: 'sdk'
       version: '8.0.x'
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
   - task: SonarCloudPrepare@1
+displayName: 'SonarCloud Prepare'
     inputs:
       SonarCloud: 'SonarConnection'
       organization: 'vuvvde170201'
@@ -33,8 +35,10 @@ steps:
     displayName: 'Build Project'
 
   - task: SonarCloudAnalyze@1
+    displayName: 'SonarCloud Analyze'
 
   - task: SonarCloudPublish@1
+    displayName: 'SonarCloud Publish'
     inputs:
       pollingTimeoutSec: '300'
 
@@ -57,18 +61,16 @@ steps:
       targetFolder: '/home/vuvudev/apps/umlbasicaiapi'
 
   - task: SSH@0
+displayName: 'Extract app on Azure VPS'
     inputs:
       sshEndpoint: 'AzureVPS'
       runOptions: 'commands'
       commands: |
         unzip -o /home/vuvudev/apps/umlbasicaiapi/umlbasicaiapi.zip -d /home/vuvudev/apps/umlbasicaiapi/production
         rm /home/vuvudev/apps/umlbasicaiapi/umlbasicaiapi.zip
-        sudo systemctl daemon-reload
-        sudo systemctl restart umlbasicaiapi
-        sudo systemctl status umlbasicaiapi --no-pager
-
 
   - task: SSH@0
+    displayName: 'Restart app on Azure VPS'
     inputs:
       sshEndpoint: 'AzureVPS'
       runOptions: 'commands'
