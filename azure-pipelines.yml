@@ -33,14 +33,6 @@ steps:
   - script: dotnet publish $(projectPath) --configuration $(buildConfiguration) --output $(publishDir) --no-restore --self-contained false
     displayName: 'Publish Project'
 
-  # 6. SSH Deploy to VPS
-  - task: InstallSSHKey@0
-    inputs:
-      knownHostsEntry: '20.2.88.32'
-      sshPublicKey: '$(sshPublicKey)' # hoặc không cần nếu dùng password auth
-      sshKeySecureFile: 'vps-private-key.pem' # Tên file SSH key đã upload lên Azure
-      passphrase: '' # nếu không có pass
-
   - task: CopyFilesOverSSH@0
     inputs:
       sshEndpoint: 'UMLVPS' # service connection đã tạo
