@@ -61,7 +61,7 @@ steps:
       targetFolder: '/home/vuvudev/apps/umlbasicaiapi'
 
   - task: SSH@0
-displayName: 'Extract app on Azure VPS'
+    displayName: 'Extract app on Azure VPS'
     inputs:
       sshEndpoint: 'AzureVPS'
       runOptions: 'commands'
