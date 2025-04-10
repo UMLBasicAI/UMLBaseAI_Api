@@ -18,6 +18,18 @@ public sealed class Endpoint : ControllerBase
 
     public Endpoint(Service service) => _service = service;
 
+    /// <summary>
+    ///     Endpoint for register new user.
+    /// </summary>
+    /// <param name="request">
+    ///     Incoming request.
+    /// </param>
+    /// <response code="422">PASSWORD_IS_INVALID</response>
+    /// <response code="409">EMAIL_ALREADY_EXISTS</response>
+    /// <response code="400">VALIDATION_FAILED</response>
+    /// <response code="500">SERVER_ERROR</response>
+    /// <response code="200">SUCCESS</response>
+    /// <response code="1">EXAMPLE RESPONSE OF ALL STATUS CODES</response>
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

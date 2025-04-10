@@ -1,6 +1,7 @@
 ﻿using Base.Common.DependencyInjection;
 using Base.Config;
 using NSwag;
+using NSwag.Generation.Processors.Security;
 
 namespace Base.NSwagger;
 
@@ -63,6 +64,10 @@ internal sealed class RegistrationCenter : IExternalServiceRegister
                     BearerFormat = swaggerOptions.Doc.Auth.Bearer.BearerFormat,
                     Description = swaggerOptions.Doc.Auth.Bearer.Description,
                 }
+            );
+
+            config.OperationProcessors.Add(
+                new OperationSecurityScopeProcessor(JWT_BEARER_SCHEME_NAME)
             );
         });
 
