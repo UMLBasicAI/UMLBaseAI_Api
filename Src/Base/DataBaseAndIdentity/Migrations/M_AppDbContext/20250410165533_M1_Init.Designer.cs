@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250409031638_M1_Test")]
-    partial class M1_Test
+    [Migration("20250410165533_M1_Init")]
+    partial class M1_Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,6 +36,9 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                         .HasColumnType("VARCHAR(65535)")
                         .HasColumnName("avatar");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Description")
                         .HasColumnType("VARCHAR(65535)")
                         .HasColumnName("description");
@@ -50,9 +53,44 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                         .HasColumnType("VARCHAR(255)")
                         .HasColumnName("last_name");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.ToTable("additional_user_information", "uml_base_ai");
+                });
+
+            modelBuilder.Entity("Base.DataBaseAndIdentity.Entities.HistoryEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("VARCHAR")
+                        .HasColumnName("action");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PlantUMLCode")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("plant_uml_code");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("user_id")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("user_id");
+
+                    b.ToTable("history", "uml_base_ai");
                 });
 
             modelBuilder.Entity("Base.DataBaseAndIdentity.Entities.IdentityRoleEntity", b =>
@@ -79,7 +117,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", "uml_base_ai");
+                    b.ToTable("role", "uml_base_ai");
                 });
 
             modelBuilder.Entity("Base.DataBaseAndIdentity.Entities.IdentityUserEntity", b =>
@@ -147,24 +185,43 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     b.ToTable("user", "uml_base_ai");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
+            modelBuilder.Entity("Base.DataBaseAndIdentity.Entities.MessageEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("text");
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("content");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("NormalizedName")
-                        .HasColumnType("text");
+                    b.Property<string>("MessageType")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("message_type");
+
+                    b.Property<string>("SentAt")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("sent_at");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("history_id")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.ToTable("role", "uml_base_ai");
+                    b.HasIndex("history_id");
+
+                    b.ToTable("message", "uml_base_ai");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -301,6 +358,28 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     b.Navigation("IdentityUser");
                 });
 
+            modelBuilder.Entity("Base.DataBaseAndIdentity.Entities.HistoryEntity", b =>
+                {
+                    b.HasOne("Base.DataBaseAndIdentity.Entities.IdentityUserEntity", "IdentityUser")
+                        .WithMany("Histories")
+                        .HasForeignKey("user_id")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("IdentityUser");
+                });
+
+            modelBuilder.Entity("Base.DataBaseAndIdentity.Entities.MessageEntity", b =>
+                {
+                    b.HasOne("Base.DataBaseAndIdentity.Entities.HistoryEntity", "History")
+                        .WithMany("Messages")
+                        .HasForeignKey("history_id")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("History");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Base.DataBaseAndIdentity.Entities.IdentityRoleEntity", null)
@@ -352,10 +431,17 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Base.DataBaseAndIdentity.Entities.HistoryEntity", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
             modelBuilder.Entity("Base.DataBaseAndIdentity.Entities.IdentityUserEntity", b =>
                 {
                     b.Navigation("AdditionUserInformation")
                         .IsRequired();
+
+                    b.Navigation("Histories");
                 });
 #pragma warning restore 612, 618
         }

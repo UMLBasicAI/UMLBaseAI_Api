@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Base.DataBaseAndIdentity.EntitiesConfigurations;
 
-public class BaseIdentityRoleClaimEntityConfiguration
+public sealed class BaseIdentityRoleClaimEntityConfiguration
     : IEntityTypeConfiguration<IdentityRoleClaim<Guid>>
 {
     public void Configure(EntityTypeBuilder<IdentityRoleClaim<Guid>> builder)

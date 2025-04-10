@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 {
     /// <inheritdoc />
-    public partial class M1_Test : Migration
+    public partial class M1_Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,28 +19,13 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                 .Annotation("Npgsql:CollationDefinition:case_insensitive", "en-u-ks-primary,en-u-ks-primary,icu,False");
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoles",
+                name: "role",
                 schema: "uml_base_ai",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "role",
-                schema: "uml_base_ai",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    NormalizedName = table.Column<string>(type: "text", nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -89,10 +74,10 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                 {
                     table.PrimaryKey("PK_role_claim", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_role_claim_AspNetRoles_RoleId",
+                        name: "FK_role_claim_role_RoleId",
                         column: x => x.RoleId,
                         principalSchema: "uml_base_ai",
-                        principalTable: "AspNetRoles",
+                        principalTable: "role",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -106,7 +91,9 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     first_name = table.Column<string>(type: "VARCHAR(255)", nullable: false),
                     last_name = table.Column<string>(type: "VARCHAR(255)", nullable: false),
                     description = table.Column<string>(type: "VARCHAR(65535)", nullable: true),
-                    avatar = table.Column<string>(type: "VARCHAR(65535)", nullable: true)
+                    avatar = table.Column<string>(type: "VARCHAR(65535)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -114,6 +101,29 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     table.ForeignKey(
                         name: "FK_additional_user_information_user_Id",
                         column: x => x.Id,
+                        principalSchema: "uml_base_ai",
+                        principalTable: "user",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "history",
+                schema: "uml_base_ai",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    action = table.Column<string>(type: "VARCHAR", maxLength: 255, nullable: false),
+                    plant_uml_code = table.Column<string>(type: "TEXT", nullable: true),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_history", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_history_user_user_id",
+                        column: x => x.user_id,
                         principalSchema: "uml_base_ai",
                         principalTable: "user",
                         principalColumn: "Id");
@@ -176,10 +186,10 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                 {
                     table.PrimaryKey("PK_user_role", x => new { x.UserId, x.RoleId });
                     table.ForeignKey(
-                        name: "FK_user_role_AspNetRoles_RoleId",
+                        name: "FK_user_role_role_RoleId",
                         column: x => x.RoleId,
                         principalSchema: "uml_base_ai",
-                        principalTable: "AspNetRoles",
+                        principalTable: "role",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -215,10 +225,46 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "message",
+                schema: "uml_base_ai",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    content = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    message_type = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    sent_at = table.Column<string>(type: "text", nullable: false),
+                    history_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_message", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_message_history_history_id",
+                        column: x => x.history_id,
+                        principalSchema: "uml_base_ai",
+                        principalTable: "history",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_history_user_id",
+                schema: "uml_base_ai",
+                table: "history",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_message_history_id",
+                schema: "uml_base_ai",
+                table: "message",
+                column: "history_id");
+
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 schema: "uml_base_ai",
-                table: "AspNetRoles",
+                table: "role",
                 column: "NormalizedName",
                 unique: true);
 
@@ -268,7 +314,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                 schema: "uml_base_ai");
 
             migrationBuilder.DropTable(
-                name: "role",
+                name: "message",
                 schema: "uml_base_ai");
 
             migrationBuilder.DropTable(
@@ -292,7 +338,11 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                 schema: "uml_base_ai");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles",
+                name: "history",
+                schema: "uml_base_ai");
+
+            migrationBuilder.DropTable(
+                name: "role",
                 schema: "uml_base_ai");
 
             migrationBuilder.DropTable(
