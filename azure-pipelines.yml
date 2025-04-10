@@ -14,14 +14,14 @@ steps:
     fetchDepth: 0
 
   - task: UseDotNet@2
-  displayName: 'Use .NET Core SDK 8.0.x'
+    displayName: 'Use .NET Core SDK 8.0.x'
     inputs:
       packageType: 'sdk'
       version: '8.0.x'
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
   - task: SonarCloudPrepare@1
-displayName: 'SonarCloud Prepare'
+    displayName: 'SonarCloud Prepare'
     inputs:
       SonarCloud: 'SonarConnection'
       organization: 'vuvvde170201'
