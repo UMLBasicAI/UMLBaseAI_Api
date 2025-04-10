@@ -28,6 +28,9 @@ steps:
       scannerMode: 'MSBuild'
       projectKey: 'vuvvde170201_UMLBasicAI_API'
       projectName: 'UMLBasicAI_API'
+      extraProperties: |
+        sonar.exclusions=**/Migrations/**/*.cs,**/bin/**/*,**/obj/**/*
+
   - script: dotnet restore $(projectPath)
     displayName: 'Restore Dependencies'
 
