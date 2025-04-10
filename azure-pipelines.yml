@@ -20,7 +20,13 @@ steps:
       packageType: 'sdk'
       version: '8.0.x'
       installationPath: $(Agent.ToolsDirectory)/dotnet
-
+  # 3. Prepare SonarQube Analysis
+  - task: SonarQubePrepare@5
+    inputs:
+      SonarQube: 'SonarConnection' # Đặt tên theo service connection đã tạo
+      scannerMode: 'MSBuild'
+      projectKey: 'vuvvde170201_UMLBasicAI_API'
+      projectName: 'UMLBasicAI_API'
   # 3. Restore
   - script: dotnet restore $(projectPath)
     displayName: 'Restore Dependencies'
@@ -28,6 +34,14 @@ steps:
   # 4. Build
   - script: dotnet build $(projectPath) --configuration $(buildConfiguration) --no-restore
     displayName: 'Build Project'
+
+  # 6. Run SonarQube Analysis
+  - task: SonarQubeAnalyze@5
+
+  # 7. (Optional) Publish Quality Gate
+  - task: SonarQubePublish@5
+    inputs:
+      pollingTimeoutSec: '300'
 
   # 5. Publish
   - script: dotnet publish $(projectPath) --configuration $(buildConfiguration) --output $(publishDir) --no-restore --self-contained false
