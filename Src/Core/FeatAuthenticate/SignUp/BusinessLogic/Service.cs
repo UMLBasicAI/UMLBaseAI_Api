@@ -51,16 +51,6 @@ public sealed class Service : IServiceHandler<AppRequestModel, AppResponseModel>
             return Constant.DefaultResponse.App.SERVER_ERROR;
         }
 
-        var testEmail = _emailSendingHandler.Value.SendAsync(
-            new()
-            {
-                To = "vuvo070403@gmail.com",
-                Body = "SOME THING HERE!!",
-                Subject = "TEST EMAIL SENDER",
-            },
-            cancellationToken
-        );
-
         return new() { AppCode = Constant.AppCode.SUCCESS };
     }
 
