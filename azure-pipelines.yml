@@ -35,14 +35,14 @@ steps:
 
   - task: CopyFilesOverSSH@0
     inputs:
-      sshEndpoint: 'UMLVPS' # service connection đã tạo
+      sshEndpoint: 'AzureVPS' # service connection đã tạo
       sourceFolder: '$(publishDir)'
       contents: '**'
       targetFolder: '/home/vuvudev/apps/umlbasicaiapi/production'
 
   - task: SSH@0
     inputs:
-      sshEndpoint: 'UMLVPS'
+      sshEndpoint: 'AzureVPS'
       runOptions: 'commands'
       commands: |
         sudo systemctl daemon-reload
