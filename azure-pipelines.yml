@@ -33,12 +33,35 @@ steps:
   - script: dotnet publish $(projectPath) --configuration $(buildConfiguration) --output $(publishDir) --no-restore --self-contained false
     displayName: 'Publish Project'
 
+    # 6. Nén thư mục publish thành file zip
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: '$(publishDir)'
+      includeRootFolder: false
+      archiveType: 'zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/umlbasicaiapi.zip'
+      replaceExistingArchive: true
+
+  # 7. Copy file zip sang VPS
   - task: CopyFilesOverSSH@0
     inputs:
-      sshEndpoint: 'AzureVPS' # service connection đã tạo
-      sourceFolder: '$(publishDir)'
-      contents: '**'
-      targetFolder: '/home/vuvudev/apps/umlbasicaiapi/production'
+      sshEndpoint: 'AzureVPS'
+      sourceFolder: '$(Build.ArtifactStagingDirectory)'
+      contents: 'umlbasicaiapi.zip'
+      targetFolder: '/home/vuvudev/apps/umlbasicaiapi'
+
+  # 8. SSH giải nén và restart service
+  - task: ExtractSourceCode@0
+    inputs:
+      sshEndpoint: 'AzureVPS'
+      runOptions: 'commands'
+      commands: |
+        unzip -o /home/vuvudev/apps/umlbasicaiapi/umlbasicaiapi.zip -d /home/vuvudev/apps/umlbasicaiapi/production
+        rm /home/vuvudev/apps/umlbasicaiapi/umlbasicaiapi.zip
+        sudo systemctl daemon-reload
+        sudo systemctl restart umlbasicaiapi
+        sudo systemctl status umlbasicaiapi --no-pager
+
 
   - task: SSH@0
     inputs:
