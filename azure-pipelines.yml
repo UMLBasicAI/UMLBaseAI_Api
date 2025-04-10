@@ -10,44 +10,37 @@ variables:
   publishDir: '$(Build.ArtifactStagingDirectory)/publish'
 
 steps:
-  # 1. Fetch full history
   - checkout: self
     fetchDepth: 0
 
-  # 2. Cài .NET SDK (nếu cần)
   - task: UseDotNet@2
     inputs:
       packageType: 'sdk'
       version: '8.0.x'
       installationPath: $(Agent.ToolsDirectory)/dotnet
-  # 3. Prepare SonarQube Analysis
-  - task: SonarQubePrepare@5
+
+  - task: SonarCloudPrepare@1
     inputs:
-      SonarQube: 'SonarConnection' # Đặt tên theo service connection đã tạo
+      SonarQube: 'SonarConnection'
+      organization: 'vuvvde170201'
       scannerMode: 'MSBuild'
       projectKey: 'vuvvde170201_UMLBasicAI_API'
       projectName: 'UMLBasicAI_API'
-  # 3. Restore
   - script: dotnet restore $(projectPath)
     displayName: 'Restore Dependencies'
 
-  # 4. Build
   - script: dotnet build $(projectPath) --configuration $(buildConfiguration) --no-restore
     displayName: 'Build Project'
 
-  # 6. Run SonarQube Analysis
-  - task: SonarQubeAnalyze@5
+  - task: SonarCloudAnalyze@1
 
-  # 7. (Optional) Publish Quality Gate
-  - task: SonarQubePublish@5
+  - task: SonarCloudPublish@1
     inputs:
       pollingTimeoutSec: '300'
 
-  # 5. Publish
   - script: dotnet publish $(projectPath) --configuration $(buildConfiguration) --output $(publishDir) --no-restore --self-contained false
     displayName: 'Publish Project'
 
-    # 6. Nén thư mục publish thành file zip
   - task: ArchiveFiles@2
     inputs:
       rootFolderOrFile: '$(publishDir)'
@@ -56,7 +49,6 @@ steps:
       archiveFile: '$(Build.ArtifactStagingDirectory)/umlbasicaiapi.zip'
       replaceExistingArchive: true
 
-  # 7. Copy file zip sang VPS
   - task: CopyFilesOverSSH@0
     inputs:
       sshEndpoint: 'AzureVPS'
@@ -64,7 +56,6 @@ steps:
       contents: 'umlbasicaiapi.zip'
       targetFolder: '/home/vuvudev/apps/umlbasicaiapi'
 
-  # 8. SSH giải nén và restart service
   - task: SSH@0
     inputs:
       sshEndpoint: 'AzureVPS'
