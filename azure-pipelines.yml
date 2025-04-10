@@ -51,7 +51,7 @@ steps:
       targetFolder: '/home/vuvudev/apps/umlbasicaiapi'
 
   # 8. SSH giải nén và restart service
-  - task: ExtractSourceCode@0
+  - task: SSH@0
     inputs:
       sshEndpoint: 'AzureVPS'
       runOptions: 'commands'
