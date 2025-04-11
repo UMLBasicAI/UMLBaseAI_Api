@@ -42,7 +42,7 @@ jobs:
                 /d:sonar.coverage.exclusions="**/*" \
                 /d:sonar.verbose=true
 
-              dotnet build UMLBaseAI.sln --no-restore --configuration Release
+              dotnet build UMLBasicAI.sln --no-restore --configuration Release
       
               dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
 
