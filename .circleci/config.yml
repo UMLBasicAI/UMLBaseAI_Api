@@ -31,11 +31,19 @@ jobs:
       - run:
           name: SonarCloud scan
           command: |
-            dotnet tool install --global dotnet-sonarscanner
-            export PATH="$PATH:/root/.dotnet/tools"
-            dotnet sonarscanner begin /k:"UMLBasicAI_UMLBaseAI_Api" /o:"umlbasicai" /d:sonar.token="$SONAR_TOKEN" /d:sonar.exclusions="**/Migrations/**/*"
-            dotnet build Src/Entry/Entry.csproj
-            dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
+              dotnet tool install --global dotnet-sonarscanner
+              export PATH="$PATH:/root/.dotnet/tools"
+      
+              dotnet sonarscanner begin \
+                /k:"UMLBasicAI_UMLBaseAI_Api" \
+                /o:"umlbasicai" \
+                /d:sonar.token="$SONAR_TOKEN" \
+                /d:sonar.exclusions="**/Migrations/**/*" \
+                /d:sonar.projectBaseDir="."
+
+              dotnet build Src/Entry/Entry.csproj --no-restore
+              dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
+
 
       - run:
           name: Publish app
