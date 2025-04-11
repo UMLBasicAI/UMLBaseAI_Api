@@ -25,24 +25,27 @@ jobs:
           command: dotnet build Src/Entry/Entry.csproj --configuration Release --no-restore
 
       - run:
-          name: Run tests (nếu có)
+          name: Run tests
           command: echo "No tests defined - skip or add here"
 
       - run:
-          name: SonarCloud scan
-          command: |
+            name: SonarCloud scan
+            command: |
               dotnet tool install --global dotnet-sonarscanner
               export PATH="$PATH:/root/.dotnet/tools"
-      
+
               dotnet sonarscanner begin \
                 /k:"UMLBasicAI_UMLBaseAI_Api" \
                 /o:"umlbasicai" \
                 /d:sonar.token="$SONAR_TOKEN" \
-                /d:sonar.exclusions="**/Migrations/**/*" \
-                /d:sonar.projectBaseDir="."
+                /d:sonar.exclusions="**/Migrations/**/*,**/obj/**/*,**/*.http,**/launchSettings.json" \
+                /d:sonar.coverage.exclusions="**/*" \
+                /d:sonar.verbose=true
 
-              dotnet build Src/Entry/Entry.csproj --no-restore
+              dotnet build UMLBaseAI.sln --no-restore --configuration Release
+      
               dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
+
 
 
       - run:
