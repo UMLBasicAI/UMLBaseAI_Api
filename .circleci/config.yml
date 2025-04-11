@@ -51,7 +51,7 @@ jobs:
       - run:
           name: Deploy to Azure VPS
           command: |
-            ssh -o StrictHostKeyChecking=no adminplantuml@20.2.88.32 \<< 'EOF'
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 \<< 'EOF'
               # Check if dotnet is installed
               if ! command -v dotnet &> /dev/null; then
                 echo ".NET not found. Installing .NET SDK and Runtime..."
@@ -69,10 +69,10 @@ jobs:
               mkdir -p /home/adminplantuml/apps/umlbasicaiapi/production
             EOF
 
-            scp -o StrictHostKeyChecking=no -r ./publish/* adminplantuml@20.2.88.32:/home/adminplantuml/apps/umlbasicaiapi/production
-            ssh -o StrictHostKeyChecking=no adminplantuml@20.2.88.32 "sudo systemctl daemon-reload"
-            ssh -o StrictHostKeyChecking=no adminplantuml@20.2.88.32 "sudo systemctl restart umlbasicaiapi"
-            ssh -o StrictHostKeyChecking=no adminplantuml@20.2.88.32 "sudo systemctl status umlbasicaiapi --no-pager"
+            scp -o StrictHostKeyChecking=no -r ./publish/* adminplantuml@20.189.124.231:/home/adminplantuml/apps/umlbasicaiapi/production
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 "sudo systemctl daemon-reload"
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 "sudo systemctl restart umlbasicaiapi"
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 "sudo systemctl status umlbasicaiapi --no-pager"
 
 workflows:
   build-deploy:
