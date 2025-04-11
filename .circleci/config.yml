@@ -41,7 +41,7 @@ jobs:
 
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:tAU0OGff3IHLy0PV3JrdjtizXfq4bAKblpidItk5Clk" 
+            - "SHA256:l773R58oKSwz7pggORkLHL2XxUko5EMWHOMuu2AvS/8" 
 
       - run:
           name: Install SCP
@@ -49,14 +49,30 @@ jobs:
               apt-get update && apt-get install -y openssh-client
 
       - run:
-            name: Deploy to Azure VPS
-            command: |
-              ssh -o StrictHostKeyChecking=no vuvudev@20.2.88.32 "mkdir -p /home/vuvudev/apps/umlbasicaiapi/production"
-              scp -o StrictHostKeyChecking=no -r ./publish/* vuvudev@20.2.88.32:/home/vuvudev/apps/umlbasicaiapi/production
-              ssh -o StrictHostKeyChecking=no vuvudev@20.2.88.32 "sudo systemctl daemon-reload"
-              ssh -o StrictHostKeyChecking=no vuvudev@20.2.88.32 "sudo systemctl restart umlbasicaiapi"
-              ssh -o StrictHostKeyChecking=no vuvudev@20.2.88.32 "sudo systemctl status umlbasicaiapi --no-pager"
+          name: Deploy to Azure VPS
+          command: |
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.2.88.32 \<< 'EOF'
+              # Check if dotnet is installed
+              if ! command -v dotnet &> /dev/null; then
+                echo ".NET not found. Installing .NET SDK and Runtime..."
+                wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+                sudo dpkg -i packages-microsoft-prod.deb
+                rm packages-microsoft-prod.deb
+                sudo apt-get update
+                sudo apt-get install -y dotnet-sdk-8.0 aspnetcore-runtime-8.0
+              else
+                echo ".NET is already installed:"
+                dotnet --info
+              fi
 
+              # Create target directory
+              mkdir -p /home/adminplantuml/apps/umlbasicaiapi/production
+            EOF
+
+            scp -o StrictHostKeyChecking=no -r ./publish/* adminplantuml@20.2.88.32:/home/adminplantuml/apps/umlbasicaiapi/production
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.2.88.32 "sudo systemctl daemon-reload"
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.2.88.32 "sudo systemctl restart umlbasicaiapi"
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.2.88.32 "sudo systemctl status umlbasicaiapi --no-pager"
 
 workflows:
   build-deploy:
