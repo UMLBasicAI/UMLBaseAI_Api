@@ -49,30 +49,48 @@ jobs:
               apt-get update && apt-get install -y openssh-client
 
       - run:
-          name: Deploy to Azure VPS
+          name: Check and install .NET on VPS
           command: |
-            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 \<< 'EOF'
-              # Check if dotnet is installed
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 << 'EOF'
               if ! command -v dotnet &> /dev/null; then
                 echo ".NET not found. Installing .NET SDK and Runtime..."
                 wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-                sudo dpkg -i packages-microsoft-prod.deb
+                dpkg -i packages-microsoft-prod.deb
                 rm packages-microsoft-prod.deb
-                sudo apt-get update
-                sudo apt-get install -y dotnet-sdk-8.0 aspnetcore-runtime-8.0
+                apt-get update
+                apt-get install -y dotnet-sdk-8.0 aspnetcore-runtime-8.0
               else
                 echo ".NET is already installed:"
                 dotnet --info
               fi
+            EOF
 
-              # Create target directory
+      - run:
+          name: Create app directory on VPS
+          command: |
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 << 'EOF'
               mkdir -p /home/adminplantuml/apps/umlbasicaiapi/production
             EOF
 
+      - run:
+          name: Copy publish files to VPS
+          command: |
             scp -o StrictHostKeyChecking=no -r ./publish/* adminplantuml@20.189.124.231:/home/adminplantuml/apps/umlbasicaiapi/production
-            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 "sudo systemctl daemon-reload"
-            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 "sudo systemctl restart umlbasicaiapi"
-            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 "sudo systemctl status umlbasicaiapi --no-pager"
+
+      - run:
+          name: Reload systemd daemon
+          command: |
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 "systemctl daemon-reload"
+
+      - run:
+          name: Restart umlbasicaiapi service
+          command: |
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 "systemctl restart umlbasicaiapi"
+
+      - run:
+          name: Check service status
+          command: |
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 "systemctl status umlbasicaiapi --no-pager"
 
 workflows:
   build-deploy:
