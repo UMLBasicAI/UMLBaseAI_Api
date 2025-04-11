@@ -3,6 +3,7 @@
 orbs:
   sonarcloud: sonarsource/sonarcloud@2.0.0
 
+
 executors:
   dotnet-executor:
     docker:
@@ -32,7 +33,7 @@ jobs:
           command: |
             dotnet tool install --global dotnet-sonarscanner
             export PATH="$PATH:/root/.dotnet/tools"
-            dotnet sonarscanner begin /k:"UMLBasicAI_UMLBaseAI_Api" /o:"umlbasicai" /d:sonar.token="$SONAR_TOKEN"
+            dotnet sonarscanner begin /k:"UMLBasicAI_UMLBaseAI_Api" /o:"umlbasicai" /d:sonar.token="$SONAR_TOKEN" /d:sonar.exclusions="**/Migrations/**/*"
             dotnet build Src/Entry/Entry.csproj
             dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
 
