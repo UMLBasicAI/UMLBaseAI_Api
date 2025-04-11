@@ -1,4 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Base.DataBaseAndIdentity.DBContext;
 using Entry.Registry;
@@ -21,6 +21,22 @@ configuration
     .AddJsonFile("appsettings.json", optional: true)
     .AddJsonFile($"appsettings.{environment}.json", optional: true)
     .AddEnvironmentVariables();
+
+var appName = configuration["AppSettings:AppName"];
+if (string.IsNullOrEmpty(appName))
+{
+    Console.WriteLine("Could not load 'appsettings.json' or key 'AppSettings:AppName' is missing.");
+}
+else
+{
+    Console.WriteLine($"Loaded configuration: AppSettings:AppName = {appName}");
+}
+
+var providers = ((IConfigurationRoot)configuration).Providers.ToList();
+foreach (var provider in providers)
+{
+    Console.WriteLine($"🔹 Loaded configuration provider: {provider.GetType().Name}");
+}
 
 service.RegisterRequireServices(configuration);
 
