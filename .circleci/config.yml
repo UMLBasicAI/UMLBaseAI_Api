@@ -1,5 +1,8 @@
 ﻿version: 2.1
 
+orbs:
+  sonarcloud: sonarsource/sonarcloud@2.0.0
+
 executors:
   dotnet-executor:
     docker:
@@ -25,6 +28,15 @@ jobs:
           command: echo "No tests defined - skip or add here"
 
       - run:
+          name: SonarCloud scan
+          command: |
+            dotnet tool install --global dotnet-sonarscanner
+            export PATH="$PATH:/root/.dotnet/tools"
+            dotnet sonarscanner begin /k:"UMLBasicAI_UMLBaseAI_Api" /o:"umlbasicai" /d:sonar.token="$SONAR_TOKEN"
+            dotnet build Src/Entry/Entry.csproj
+            dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
+
+      - run:
           name: Publish app
           command: dotnet publish Src/Entry/Entry.csproj -c Release -o ./publish --self-contained false
 
@@ -41,17 +53,17 @@ jobs:
 
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:l773R58oKSwz7pggORkLHL2XxUko5EMWHOMuu2AvS/8" 
+            - "SHA256:l773R58oKSwz7pggORkLHL2XxUko5EMWHOMuu2AvS/8"
 
       - run:
           name: Install SCP
-          command: | 
-              apt-get update && apt-get install -y openssh-client
+          command: |
+            apt-get update && apt-get install -y openssh-client
 
       - run:
           name: Check and install .NET on VPS
           command: |
-            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 \<< 'EOF'
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 << 'EOF'
               if ! command -v dotnet &> /dev/null; then
                 echo ".NET not found. Installing .NET SDK and Runtime..."
                 wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
@@ -68,7 +80,7 @@ jobs:
       - run:
           name: Create app directory on VPS
           command: |
-            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 \<< 'EOF'
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 << 'EOF'
               mkdir -p /home/adminplantuml/apps/umlbasicaiapi/production
             EOF
 
@@ -95,7 +107,8 @@ jobs:
 workflows:
   build-deploy:
     jobs:
-      - build
+      - build:
+          context: SonarCloud
       - deploy:
           requires:
             - build
