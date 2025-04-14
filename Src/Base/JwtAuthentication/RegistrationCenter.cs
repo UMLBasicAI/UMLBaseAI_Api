@@ -11,6 +11,7 @@ internal sealed class RegistrationCenter : IExternalServiceRegister
 {
     public IServiceCollection Register(IServiceCollection services, IConfiguration configuration)
     {
+        AddJwtAuthentication(services, configuration);
         return services;
     }
 
