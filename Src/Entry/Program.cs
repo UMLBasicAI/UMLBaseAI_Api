@@ -23,6 +23,7 @@ configuration
     .AddEnvironmentVariables();
 
 var appName = configuration["AppSettings:AppName"];
+
 if (string.IsNullOrEmpty(appName))
 {
     Console.WriteLine("Could not load 'appsettings.json' or key 'AppSettings:AppName' is missing.");
@@ -64,6 +65,7 @@ app.UseRouting()
         options.Path = string.Empty;
         options.DefaultModelsExpandDepth = -1;
     });
+
 app.MapControllers();
 
 await app.RunAsync(CancellationToken.None);

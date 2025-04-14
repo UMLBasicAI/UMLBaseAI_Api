@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Core\FCommon\FCommon.csproj" />
+    <ProjectReference Include="..\Core\FeatAuthenticate\RefreshAccessToken\RefreshAccessToken.csproj" />
     <ProjectReference Include="..\Core\FeatAuthenticate\SignIn\SignIn.csproj" />
     <ProjectReference Include="..\Core\FeatAuthenticate\SignUp\SignUp.csproj" />
   </ItemGroup>
