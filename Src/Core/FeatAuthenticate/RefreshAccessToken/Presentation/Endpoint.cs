@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
+using FCommon.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RefreshAccessToken.BusinessLogic;
@@ -41,6 +43,7 @@ public sealed class Endpoint : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
     [HttpPost(Constant.ENDPOINT_PATH)]
+    [Authorize(Policy = nameof(DefaultAuthorizationRequirement))]
     [ServiceFilter<SetStageBagFilter>]
     [ServiceFilter<ValidationFilter>]
     public async Task<IActionResult> ExecuteAsync(
