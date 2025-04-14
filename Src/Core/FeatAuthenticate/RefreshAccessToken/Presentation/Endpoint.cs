@@ -1,16 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
+using FCommon.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SignIn.BusinessLogic;
-using SignIn.Common;
-using SignIn.Mapper;
-using SignIn.Models;
-using SignIn.Presentation;
-using SignIn.Presentation.Filter.SetStageBag;
-using SignIn.Presentation.Validation;
+using RefreshAccessToken.BusinessLogic;
+using RefreshAccessToken.Common;
+using RefreshAccessToken.Mapper;
+using RefreshAccessToken.Models;
+using RefreshAccessToken.Presentation.Filter.SetStageBag;
+using RefreshAccessToken.Presentation.Validation;
 
-namespace SignUp.Presentation;
+namespace RefreshAccessToken.Presentation;
 
 [Tags(Constant.CONTROLLER_NAME)]
 public sealed class Endpoint : ControllerBase
@@ -42,6 +43,7 @@ public sealed class Endpoint : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
     [HttpPost(Constant.ENDPOINT_PATH)]
+    [Authorize(Policy = nameof(DefaultAuthorizationRequirement))]
     [ServiceFilter<SetStageBagFilter>]
     [ServiceFilter<ValidationFilter>]
     public async Task<IActionResult> ExecuteAsync(
@@ -51,9 +53,9 @@ public sealed class Endpoint : ControllerBase
     {
         var appRequest = new AppRequestModel
         {
-            Email = request.Email,
-            Password = request.Password,
-            RememberMe = request.RememberMe,
+            UserId = request.UserId,
+            RefreshToken = request.RefreshToken,
+            AccessTokenId = request.AccessTokenId,
         };
         var appResponse = await _service.ExecuteAsync(appRequest, cancellationToken);
         var httpResponse = HttpResponseMapper.Get(appRequest, appResponse, HttpContext);

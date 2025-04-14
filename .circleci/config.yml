@@ -3,7 +3,6 @@
 orbs:
   sonarcloud: sonarsource/sonarcloud@2.0.0
 
-
 executors:
   dotnet-executor:
     docker:
@@ -124,3 +123,7 @@ workflows:
       - deploy:
           requires:
             - build
+          filters:
+              branches:
+                  only:
+                    - main

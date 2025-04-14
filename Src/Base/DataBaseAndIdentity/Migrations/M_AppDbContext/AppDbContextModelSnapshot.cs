@@ -80,7 +80,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("user_id")
+                    b.Property<Guid?>("user_id")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -211,7 +211,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("history_id")
+                    b.Property<Guid?>("history_id")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -360,8 +360,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     b.HasOne("Base.DataBaseAndIdentity.Entities.IdentityUserEntity", "IdentityUser")
                         .WithMany("Histories")
                         .HasForeignKey("user_id")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("IdentityUser");
                 });
@@ -371,8 +370,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     b.HasOne("Base.DataBaseAndIdentity.Entities.HistoryEntity", "History")
                         .WithMany("Messages")
                         .HasForeignKey("history_id")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("History");
                 });
@@ -435,8 +433,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
             modelBuilder.Entity("Base.DataBaseAndIdentity.Entities.IdentityUserEntity", b =>
                 {
-                    b.Navigation("AdditionUserInformation")
-                        .IsRequired();
+                    b.Navigation("AdditionUserInformation");
 
                     b.Navigation("Histories");
                 });
