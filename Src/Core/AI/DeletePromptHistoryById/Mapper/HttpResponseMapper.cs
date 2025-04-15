@@ -19,29 +19,13 @@ public static class HttpResponseMapper
         if (Equals(_httpResponseMapper, null))
         {
             _httpResponseMapper = new();
-            _httpResponseMapper.TryAdd(
-                Constant.AppCode.EMAIL_ALREADY_EXISTS,
-                (appRequest, appResponse, httpContext) =>
-                {
-                    return Constant.DefaultResponse.Http.EMAIL_ALREADY_EXISTS;
-                }
-            );
-
-            _httpResponseMapper.TryAdd(
-                Constant.AppCode.PASSWORD_IS_INVALID,
-                (appRequest, appResponse, httpContext) =>
-                {
-                    return Constant.DefaultResponse.Http.PASSWORD_IS_INVALID;
-                }
-            );
-
+         
             _httpResponseMapper.TryAdd(
                 Constant.AppCode.SUCCESS,
                 (appRequest, appResponse, httpContext) =>
                 {
                     return new()
                     {
-                        HttpCode = StatusCodes.Status200OK,
                         AppCode = Constant.AppCode.SUCCESS.ToString(),
                     };
                 }
@@ -52,6 +36,13 @@ public static class HttpResponseMapper
                 (appRequest, appResponse, httpContext) =>
                 {
                     return Constant.DefaultResponse.Http.SERVER_ERROR;
+                }
+            );
+            _httpResponseMapper.TryAdd(
+                Constant.AppCode.UNAUTHORIZED,
+                (appRequest, appResponse, httpContext) =>
+                {
+                    return Constant.DefaultResponse.Http.UNAUTHORIZED;
                 }
             );
         }

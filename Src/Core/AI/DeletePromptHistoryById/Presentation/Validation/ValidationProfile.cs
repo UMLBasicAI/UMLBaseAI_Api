@@ -10,9 +10,6 @@ public sealed class ValidationProfile : AbstractValidator<Request>
         ClassLevelCascadeMode = CascadeMode.Stop;
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(x => x.Email).NotEmpty().EmailAddress();
-        RuleFor(x => x.Password)
-            .NotEmpty()
-            .MinimumLength(aspNetCoreIdentityOption.Password!.RequiredLength);
+        RuleFor(x => x.HistoryId).NotEmpty();
     }
 }

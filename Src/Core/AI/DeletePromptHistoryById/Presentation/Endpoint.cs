@@ -44,11 +44,11 @@ public sealed class Endpoint : ControllerBase
     [ServiceFilter<SetStageBagFilter>]
     [ServiceFilter<ValidationFilter>]
     public async Task<IActionResult> ExecuteAsync(
-        [FromBody] [Required] Request request,
+        [FromRoute] [Required] Request request,
         CancellationToken cancellationToken
     )
     {
-        var appRequest = new AppRequestModel { Email = request.Email, Password = request.Password };
+        var appRequest = new AppRequestModel { HistoryId = request.HistoryId};
         
         var appResponse = await _service.ExecuteAsync(appRequest, cancellationToken);
 
