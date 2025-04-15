@@ -54,6 +54,7 @@ public sealed class Endpoint : ControllerBase
         var appRequest = new AppRequestModel
         {
             Prompt = request.Prompt,
+            HistoryId = request.HistoryId
         };
         var appResponse = await _service.ExecuteAsync(appRequest, cancellationToken);
         var httpResponse = HttpResponseMapper.Get(appRequest, appResponse, HttpContext);

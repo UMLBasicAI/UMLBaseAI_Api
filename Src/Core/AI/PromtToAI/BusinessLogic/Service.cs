@@ -77,7 +77,7 @@ public sealed class Service : IServiceHandler<AppRequestModel, AppResponseModel>
             if (userId != null) historyId = (await _repository.Value.createAnHistory(prompt, geminiResponse.planUML, Guid.Parse(userId!), cancellationToken)).ToString();
         } else
         {
-            _repository.Value.updateHistory(geminiResponse.planUML, Guid.Parse(historyId), cancellationToken);
+            await _repository.Value.updateHistory(geminiResponse.planUML, Guid.Parse(historyId), cancellationToken);
         }
         await _repository.Value.saveMessageToHistory(Guid.Parse(historyId), prompt, "request", cancellationToken);
         await _repository.Value.saveMessageToHistory(Guid.Parse(historyId), geminiResponse.response_text, "response", cancellationToken);
