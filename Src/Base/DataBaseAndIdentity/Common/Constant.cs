@@ -12,6 +12,7 @@ internal static class Constant
     public static class DatabaseType
     {
         public const string VARCHAR = "VARCHAR";
+
         public const string TEXT = "TEXT";
 
         public const string LONG = "BIGINT";
