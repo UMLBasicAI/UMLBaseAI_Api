@@ -59,9 +59,6 @@ public sealed class Service : IServiceHandler<AppRequestModel, AppResponseModel>
             || string.IsNullOrWhiteSpace(geminiResponse.response_text)
         )
         {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"[Warning] Response from Gemini is null here!!! CHECK AGAIN");
-            Console.ResetColor();
             return new AppResponseModel { AppCode = Constant.AppCode.VALIDATION_FAILED };
         }
 
