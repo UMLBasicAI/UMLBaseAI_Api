@@ -114,7 +114,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     action = table.Column<string>(type: "VARCHAR", maxLength: 255, nullable: false),
                     plant_uml_code = table.Column<string>(type: "TEXT", nullable: true),
-                    user_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -234,7 +234,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     content = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     message_type = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     sent_at = table.Column<string>(type: "text", nullable: false),
-                    history_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    history_id = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },

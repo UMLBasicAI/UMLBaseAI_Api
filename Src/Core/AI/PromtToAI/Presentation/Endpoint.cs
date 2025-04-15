@@ -4,14 +4,14 @@ using FCommon.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RefreshAccessToken.BusinessLogic;
-using RefreshAccessToken.Common;
-using RefreshAccessToken.Mapper;
-using RefreshAccessToken.Models;
-using RefreshAccessToken.Presentation.Filter.SetStageBag;
-using RefreshAccessToken.Presentation.Validation;
+using PromptToAI.BusinessLogic;
+using PromptToAI.Common;
+using PromptToAI.Mapper;
+using PromptToAI.Models;
+using PromptToAI.Presentation.Filter.SetStageBag;
+using PromptToAI.Presentation.Validation;
 
-namespace RefreshAccessToken.Presentation;
+namespace PromptToAI.Presentation;
 
 [Tags(Constant.CONTROLLER_NAME)]
 public sealed class Endpoint : ControllerBase
@@ -43,6 +43,7 @@ public sealed class Endpoint : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
     [HttpPost(Constant.ENDPOINT_PATH)]
+    [Authorize(Policy = nameof(DefaultAuthorizationRequirement))]
     [ServiceFilter<SetStageBagFilter>]
     [ServiceFilter<ValidationFilter>]
     public async Task<IActionResult> ExecuteAsync(
@@ -52,9 +53,8 @@ public sealed class Endpoint : ControllerBase
     {
         var appRequest = new AppRequestModel
         {
-            UserId = request.UserId,
-            RefreshToken = request.RefreshToken,
-            AccessTokenId = request.AccessTokenId,
+            Prompt = request.Prompt,
+            HistoryId = request.HistoryId
         };
         var appResponse = await _service.ExecuteAsync(appRequest, cancellationToken);
         var httpResponse = HttpResponseMapper.Get(appRequest, appResponse, HttpContext);
