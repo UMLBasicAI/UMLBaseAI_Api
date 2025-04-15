@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250413165033_M1_Init")]
-    partial class M1_Init
+    [Migration("20250415044556_M2_Init")]
+    partial class M2_Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -69,8 +69,7 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
                     b.Property<string>("Action")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("VARCHAR")
+                        .HasColumnType("TEXT")
                         .HasColumnName("action");
 
                     b.Property<DateTime>("CreatedAt")
@@ -83,12 +82,13 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("user_id")
-                        .HasColumnType("uuid");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("user_id");
+                    b.HasIndex("UserId");
 
                     b.ToTable("history", "uml_base_ai");
                 });
@@ -193,12 +193,15 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("content");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("HistoryId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("history_id");
 
                     b.Property<string>("MessageType")
                         .IsRequired()
@@ -214,12 +217,9 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("history_id")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("history_id");
+                    b.HasIndex("HistoryId");
 
                     b.ToTable("message", "uml_base_ai");
                 });
@@ -362,8 +362,9 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                 {
                     b.HasOne("Base.DataBaseAndIdentity.Entities.IdentityUserEntity", "IdentityUser")
                         .WithMany("Histories")
-                        .HasForeignKey("user_id")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("IdentityUser");
                 });
@@ -372,8 +373,9 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
                 {
                     b.HasOne("Base.DataBaseAndIdentity.Entities.HistoryEntity", "History")
                         .WithMany("Messages")
-                        .HasForeignKey("history_id")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("HistoryId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("History");
                 });

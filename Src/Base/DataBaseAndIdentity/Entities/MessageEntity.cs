@@ -7,6 +7,7 @@ public sealed class MessageEntity : BaseEntity<Guid>
     public string Content { get; set; }
     public string MessageType { get; set; }
     public string SentAt { get; set; }
+    public Guid HistoryId { get; set; }
 
     #region Navigations
     public HistoryEntity History { get; set; }

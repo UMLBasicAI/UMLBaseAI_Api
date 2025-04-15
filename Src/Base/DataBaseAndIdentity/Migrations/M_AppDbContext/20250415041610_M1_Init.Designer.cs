@@ -3,6 +3,7 @@ using System;
 using Base.DataBaseAndIdentity.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250415041610_M1_Init")]
+    partial class M1_Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,7 +69,8 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
                     b.Property<string>("Action")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasMaxLength(255)
+                        .HasColumnType("VARCHAR")
                         .HasColumnName("action");
 
                     b.Property<DateTime>("CreatedAt")
@@ -190,7 +194,8 @@ namespace Base.DataBaseAndIdentity.Migrations.M_AppDbContext
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("content");
 
                     b.Property<DateTime>("CreatedAt")
