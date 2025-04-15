@@ -147,7 +147,7 @@ workflows:
           name: deploy-tst
           requires:
             - build
-          env: Tesing
+          env: Testing
           path: /home/adminplantuml/apps/umlbasicaiapi/tst
           service_name: umlbasicaiapi-tst
           filters:
