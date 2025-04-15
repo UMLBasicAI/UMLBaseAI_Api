@@ -29,7 +29,7 @@ public class HistoryEntityConfiguration : IEntityTypeConfiguration<HistoryEntity
         builder
             .HasOne(history => history.IdentityUser)
             .WithMany(user => user.Histories)
-            .HasForeignKey(HistoryEntity.Metadata.Properties.UserId.ColumnName)
+            .HasForeignKey(entity => entity.UserId)
             .OnDelete(DeleteBehavior.NoAction);
 
         //one to many with MessageEntity

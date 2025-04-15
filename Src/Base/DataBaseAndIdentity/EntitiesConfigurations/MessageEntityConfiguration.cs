@@ -27,5 +27,11 @@ public class MessageEntityConfiguration : IEntityTypeConfiguration<MessageEntity
             .Property(m => m.SentAt)
             .HasColumnName(MessageEntity.Metadata.Properties.SentAt.ColumnName)
             .IsRequired(MessageEntity.Metadata.Properties.SentAt.IsNotNull);
+
+        builder
+            .HasOne(message => message.History)
+            .WithMany(history => history.Messages)
+            .HasForeignKey(entity => entity.HistoryId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }
