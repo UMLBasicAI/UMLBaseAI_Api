@@ -1,4 +1,5 @@
-﻿using Base.DataBaseAndIdentity.Entities;
+﻿using Base.DataBaseAndIdentity.Common;
+using Base.DataBaseAndIdentity.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,7 +15,7 @@ public class MessageEntityConfiguration : IEntityTypeConfiguration<MessageEntity
         builder
             .Property(m => m.Content)
             .HasColumnName(MessageEntity.Metadata.Properties.Content.ColumnName)
-            .HasMaxLength(MessageEntity.Metadata.Properties.Content.MaxLength)
+            .HasColumnType(Constant.DatabaseType.TEXT)
             .IsRequired(MessageEntity.Metadata.Properties.Content.IsNotNull);
 
         builder
