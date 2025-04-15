@@ -81,7 +81,7 @@ jobs:
       - run:
           name: Check and install .NET on VPS
           command: |
-            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 << 'EOF'
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 \<< EOF
               if ! command -v dotnet &> /dev/null; then
                 echo ".NET not found. Installing .NET SDK and Runtime..."
                 wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
@@ -98,7 +98,7 @@ jobs:
       - run:
           name: Create app directory on VPS
           command: |
-            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 << EOF
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 \<< EOF
               mkdir -p << parameters.path >>
             EOF
 
