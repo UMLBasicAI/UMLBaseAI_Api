@@ -1,9 +1,9 @@
 ﻿using System.Collections.Concurrent;
-using Microsoft.AspNetCore.Http;
 using GetUserInformation.Common;
 using GetUserInformation.Models;
 using GetUserInformation.Presentation;
 using GetUserInformation.Presentation.Filter.SetStageBag;
+using Microsoft.AspNetCore.Http;
 
 namespace GetUserInformation.Mapper;
 
@@ -19,15 +19,16 @@ public static class HttpResponseMapper
         if (Equals(_httpResponseMapper, null))
         {
             _httpResponseMapper = new();
-         
+
             _httpResponseMapper.TryAdd(
                 Constant.AppCode.SUCCESS,
                 (appRequest, appResponse, httpContext) =>
                 {
                     return new()
                     {
+                        HttpCode = StatusCodes.Status200OK,
                         AppCode = Constant.AppCode.SUCCESS.ToString(),
-                        Body = appResponse.Body
+                        Body = appResponse.Body,
                     };
                 }
             );

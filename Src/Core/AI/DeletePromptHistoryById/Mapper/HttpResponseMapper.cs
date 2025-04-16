@@ -1,9 +1,9 @@
 ﻿using System.Collections.Concurrent;
-using Microsoft.AspNetCore.Http;
 using DeletePromptHistoryById.Common;
 using DeletePromptHistoryById.Models;
 using DeletePromptHistoryById.Presentation;
 using DeletePromptHistoryById.Presentation.Filter.SetStageBag;
+using Microsoft.AspNetCore.Http;
 
 namespace DeletePromptHistoryById.Mapper;
 
@@ -19,13 +19,14 @@ public static class HttpResponseMapper
         if (Equals(_httpResponseMapper, null))
         {
             _httpResponseMapper = new();
-         
+
             _httpResponseMapper.TryAdd(
                 Constant.AppCode.SUCCESS,
                 (appRequest, appResponse, httpContext) =>
                 {
                     return new()
                     {
+                        HttpCode = StatusCodes.Status200OK,
                         AppCode = Constant.AppCode.SUCCESS.ToString(),
                     };
                 }
