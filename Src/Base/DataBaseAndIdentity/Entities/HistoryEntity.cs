@@ -6,6 +6,7 @@ public sealed class HistoryEntity : BaseEntity<Guid>
 {
     public string Action { get; set; }
     public string PlantUMLCode { get; set; }
+    public Guid UserId { get; set; }
 
     #region Navigations
     public IdentityUserEntity IdentityUser { get; set; }

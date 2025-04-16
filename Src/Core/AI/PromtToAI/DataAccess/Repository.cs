@@ -30,7 +30,7 @@ public sealed class Repository : IRepository
             Id = Guid.NewGuid(),
             Action = action,
             PlantUMLCode = plantUml,
-            IdentityUser = user
+            UserId = userId,
         }, c);
         await _appDbContext.SaveChangesAsync(c);
         return result.Entity.Id;
@@ -41,9 +41,7 @@ public sealed class Repository : IRepository
         await _appDbContext.Set<MessageEntity>().AddAsync(new MessageEntity
         {
             Id = Guid.NewGuid(),
-            History = new HistoryEntity() { 
-                Id = historyId
-            },
+            HistoryId = historyId,
             Content = content,
             MessageType = type,
             SentAt = DateTime.UtcNow.ToString(),

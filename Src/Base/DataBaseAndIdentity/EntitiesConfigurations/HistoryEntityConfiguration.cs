@@ -15,8 +15,7 @@ public class HistoryEntityConfiguration : IEntityTypeConfiguration<HistoryEntity
         builder
             .Property(entity => entity.Action)
             .HasColumnName(HistoryEntity.Metadata.Properties.Action.ColumnName)
-            .HasColumnType(Constant.DatabaseType.VARCHAR)
-            .HasMaxLength(HistoryEntity.Metadata.Properties.Action.MaxLength)
+            .HasColumnType(Constant.DatabaseType.TEXT)
             .IsRequired(HistoryEntity.Metadata.Properties.Action.IsNotNull);
 
         builder
@@ -27,16 +26,13 @@ public class HistoryEntityConfiguration : IEntityTypeConfiguration<HistoryEntity
 
         //foreign key to IdentityUserEntity
         builder
+            .Property(entity => entity.UserId)
+            .HasColumnName(HistoryEntity.Metadata.Properties.UserId.ColumnName)
+            .IsRequired(HistoryEntity.Metadata.Properties.UserId.IsNotNull);
+        builder
             .HasOne(history => history.IdentityUser)
             .WithMany(user => user.Histories)
-            .HasForeignKey(HistoryEntity.Metadata.Properties.UserId.ColumnName)
-            .OnDelete(DeleteBehavior.NoAction);
-
-        //one to many with MessageEntity
-        builder
-            .HasMany(history => history.Messages)
-            .WithOne(message => message.History)
-            .HasForeignKey(MessageEntity.Metadata.Properties.HistoryId.ColumnName)
+            .HasForeignKey(entity => entity.UserId)
             .OnDelete(DeleteBehavior.NoAction);
     }
 }

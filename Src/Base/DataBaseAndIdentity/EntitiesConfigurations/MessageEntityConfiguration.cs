@@ -1,4 +1,5 @@
-﻿using Base.DataBaseAndIdentity.Entities;
+﻿using Base.DataBaseAndIdentity.Common;
+using Base.DataBaseAndIdentity.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,7 +15,7 @@ public class MessageEntityConfiguration : IEntityTypeConfiguration<MessageEntity
         builder
             .Property(m => m.Content)
             .HasColumnName(MessageEntity.Metadata.Properties.Content.ColumnName)
-            .HasMaxLength(MessageEntity.Metadata.Properties.Content.MaxLength)
+            .HasColumnType(Constant.DatabaseType.TEXT)
             .IsRequired(MessageEntity.Metadata.Properties.Content.IsNotNull);
 
         builder
@@ -27,5 +28,16 @@ public class MessageEntityConfiguration : IEntityTypeConfiguration<MessageEntity
             .Property(m => m.SentAt)
             .HasColumnName(MessageEntity.Metadata.Properties.SentAt.ColumnName)
             .IsRequired(MessageEntity.Metadata.Properties.SentAt.IsNotNull);
+
+        builder
+            .Property(m => m.HistoryId)
+            .HasColumnName(MessageEntity.Metadata.Properties.HistoryId.ColumnName)
+            .IsRequired(MessageEntity.Metadata.Properties.HistoryId.IsNotNull);
+
+        builder
+            .HasOne(message => message.History)
+            .WithMany(history => history.Messages)
+            .HasForeignKey(entity => entity.HistoryId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

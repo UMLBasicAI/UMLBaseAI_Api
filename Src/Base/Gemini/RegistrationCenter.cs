@@ -2,6 +2,7 @@
 using Base.Config;
 using Base.Gemini.Handler;
 using Base.Mail.Handler;
+using System.Net;
 
 namespace Base.Gemini;
 
@@ -25,6 +26,13 @@ internal sealed class RegistrationCenter : IExternalServiceRegister
         services.AddHttpClient<IGeminiService, GeminiService>((provider, client) =>
         {
             client.BaseAddress = new Uri(geminiOptions.Endpoint);
+        }).ConfigurePrimaryHttpMessageHandler(() =>
+        {
+            return new HttpClientHandler
+            {
+                Proxy = new WebProxy("http://20.84.44.128:3128"),
+                UseProxy = true
+            };
         });
 
         services.AddSingleton(geminiOptions);

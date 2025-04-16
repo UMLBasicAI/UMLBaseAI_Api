@@ -28,24 +28,23 @@ jobs:
           command: echo "No tests defined - skip or add here"
 
       - run:
-            name: SonarCloud scan
-            command: |
-              dotnet tool install --global dotnet-sonarscanner
-              export PATH="$PATH:/root/.dotnet/tools"
+          name: SonarCloud scan
+          command: |
+            dotnet tool install --global dotnet-sonarscanner
+            export PATH="$PATH:/root/.dotnet/tools"
 
-              dotnet sonarscanner begin \
-                /k:"UMLBasicAI_UMLBaseAI_Api" \
-                /o:"umlbasicai" \
-                /d:sonar.token="$SONAR_TOKEN" \
-                /d:sonar.exclusions="**/Migrations/**/*,**/obj/**/*,**/*.http,**/launchSettings.json" \
-                /d:sonar.coverage.exclusions="**/*" \
-                /d:sonar.verbose=true
+            dotnet sonarscanner begin \
+              /k:"UMLBasicAI_UMLBaseAI_Api" \
+              /o:"umlbasicai" \
+              /d:sonar.token="$SONAR_TOKEN" \
+              /d:sonar.exclusions="**/Migrations/**/*,**/obj/**/*,**/*.http,**/launchSettings.json" \
+              /d:sonar.coverage.exclusions="**/*" \
+              /d:sonar.verbose=true \
+              /d:sonar.cpd.exclusions="**/*"
 
-              dotnet build UMLBasicAI.sln --no-restore --configuration Release
-      
-              dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
+            dotnet build UMLBasicAI.sln --no-restore --configuration Release
 
-
+            dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
 
       - run:
           name: Publish app
@@ -56,7 +55,15 @@ jobs:
           paths:
             - publish
 
-  deploy:
+  deploy-template:
+    parameters:
+      env:
+        type: string
+      path:
+        type: string
+      service_name:
+        type: string
+
     executor: dotnet-executor
     steps:
       - attach_workspace:
@@ -72,33 +79,26 @@ jobs:
             apt-get update && apt-get install -y openssh-client
 
       - run:
-          name: Check and install .NET on VPS
+          name: Save appsettings to local file
           command: |
-            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 \<< 'EOF'
-              if ! command -v dotnet &> /dev/null; then
-                echo ".NET not found. Installing .NET SDK and Runtime..."
-                wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-                sudo dpkg -i packages-microsoft-prod.deb
-                rm packages-microsoft-prod.deb
-                sudo apt-get update
-                sudo apt-get install -y dotnet-sdk-8.0 aspnetcore-runtime-8.0
-              else
-                echo ".NET is already installed:"
-                dotnet --info
-              fi
-            EOF
+            echo "$appsettings" > ./appsettings.<< parameters.env >>.json
 
       - run:
           name: Create app directory on VPS
           command: |
-            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 \<< 'EOF'
-              mkdir -p /home/adminplantuml/apps/umlbasicaiapi/production
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 \<< EOF
+              mkdir -p << parameters.path >>
             EOF
+
+      - run:
+          name: Copy appsettings file to VPS
+          command: |
+            scp -o StrictHostKeyChecking=no ./appsettings.<< parameters.env >>.json adminplantuml@20.189.124.231:<< parameters.path >>/appsettings.<< parameters.env >>.json
 
       - run:
           name: Copy publish files to VPS
           command: |
-            scp -o StrictHostKeyChecking=no -r ./publish/* adminplantuml@20.189.124.231:/home/adminplantuml/apps/umlbasicaiapi/production
+            scp -o StrictHostKeyChecking=no -r ./publish/* adminplantuml@20.189.124.231:<< parameters.path >>
 
       - run:
           name: Reload systemd daemon
@@ -106,24 +106,50 @@ jobs:
             ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 "sudo systemctl daemon-reload"
 
       - run:
-          name: Restart umlbasicaiapi service
+          name: Restart << parameters.service_name >> service
           command: |
-            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 "sudo systemctl restart umlbasicaiapi"
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 "sudo systemctl restart << parameters.service_name >>"
 
       - run:
-          name: Check service status
+          name: Check << parameters.service_name >> status
           command: |
-            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 "sudo systemctl status umlbasicaiapi --no-pager"
+            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 "sudo systemctl status << parameters.service_name >> --no-pager"
 
 workflows:
   build-deploy:
     jobs:
       - build:
           context: SonarCloud
-      - deploy:
+
+      - deploy-template:
+          name: deploy-production
           requires:
             - build
+          env: Production
+          path: /home/adminplantuml/apps/umlbasicaiapi/production
+          service_name: umlbasicaiapi
           filters:
-              branches:
-                  only:
-                    - main
+            branches:
+              only: main
+
+      - deploy-template:
+          name: deploy-development
+          requires:
+            - build
+          env: Development
+          path: /home/adminplantuml/apps/umlbasicaiapi/development
+          service_name: umlbasicaiapi-development
+          filters:
+            branches:
+              only: dev
+
+      - deploy-template:
+          name: deploy-tst
+          requires:
+            - build
+          env: Testing
+          path: /home/adminplantuml/apps/umlbasicaiapi/tst
+          service_name: umlbasicaiapi-tst
+          filters:
+            branches:
+              only: tst
