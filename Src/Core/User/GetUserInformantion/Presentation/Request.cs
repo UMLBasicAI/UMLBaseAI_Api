@@ -7,5 +7,5 @@ namespace GetUserInformation.Presentation;
 [ValidateNever]
 public sealed class Request
 {
-    public string? UserId { get; set; }
+    public bool? FlagEmptyRequest { get; set; }
 }

@@ -49,7 +49,7 @@ public sealed class Endpoint : ControllerBase
         CancellationToken cancellationToken
     )
     {
-        var appRequest = new AppRequestModel { UserId = request.UserId };
+        var appRequest = new AppRequestModel { FlagEmptyRequest = true };
 
         var appResponse = await _service.ExecuteAsync(appRequest, cancellationToken);
 

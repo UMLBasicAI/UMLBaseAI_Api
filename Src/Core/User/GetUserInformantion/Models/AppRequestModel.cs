@@ -4,5 +4,5 @@ namespace GetUserInformation.Models;
 
 public sealed class AppRequestModel : IServiceRequest<AppResponseModel>
 {
-    public string? UserId { get; set; }
+    public bool? FlagEmptyRequest { get; set; }
 }
