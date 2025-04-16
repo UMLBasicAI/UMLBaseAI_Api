@@ -4,8 +4,8 @@ namespace UpdatePromptTitleNoteById.Common;
 
 public static class Constant
 {
-    public const string CONTROLLER_NAME = "AI Endpoints";
-    public const string ENDPOINT_PATH = "/Update-Prompt-Title-Note-By-Id";
+    public const string CONTROLLER_NAME = "History Endpoints";
+    public const string ENDPOINT_PATH = "/update-prompt-history-action";
     public const string REQUEST_ARGUMENT_NAME = "request";
 
     public static class DefaultResponse
@@ -60,6 +60,6 @@ public static class Constant
         UNAUTHORIZED,
         VALIDATION_FAILED,
         SERVER_ERROR,
-        NOT_BELONG_TO_USER
+        NOT_BELONG_TO_USER,
     }
 }
