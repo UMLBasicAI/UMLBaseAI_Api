@@ -28,6 +28,7 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeletePromptHistoryById", "Src\Core\AI\DeletePromptHistoryById\DeletePromptHistoryById.csproj", "{0CC86EAD-4A03-46C4-BAFF-F59CF26768C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdatePromptTitleNoteById", "Src\Core\AI\UpdatePromptTitleNoteById\UpdatePromptTitleNoteById.csproj", "{EC9F3A37-42DE-4979-B3D3-DBC9B6378B2F}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "User", "User", "{3F297C56-5E21-4308-8783-507594085ED0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetUserInformation", "Src\Core\User\GetUserInformantion\GetUserInformation.csproj", "{3462530E-6AC5-487E-8D6B-66C966CABEDE}"
