@@ -38,9 +38,15 @@ internal static class AppServiceRegisterationCenter
             }
             catch (FileNotFoundException)
             {
-                throw new ApplicationException(
-                    $"No assembly {assemblyName} is found, please check !!"
+                //throw new ApplicationException(
+                //    $"No assembly {assemblyName} is found, please check !!"
+                //);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine(
+                    $"[Warning] Assembly '{assemblyName}' not found. Please check your appsettings or dependencies."
                 );
+                Console.ResetColor();
+                continue;
             }
 
             var allTypes = assembly.GetTypes();
