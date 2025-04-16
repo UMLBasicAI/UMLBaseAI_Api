@@ -1,15 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using FCommon.Authorization;
 using GetUserInformation.BusinessLogic;
 using GetUserInformation.Common;
 using GetUserInformation.Mapper;
 using GetUserInformation.Models;
 using GetUserInformation.Presentation.Filter.SetStageBag;
 using GetUserInformation.Presentation.Validation;
-using FCommon.Authorization;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GetUserInformation.Presentation;
 
@@ -43,13 +43,10 @@ public sealed class Endpoint : ControllerBase
     [Authorize(Policy = nameof(DefaultAuthorizationRequirement))]
     [ServiceFilter<SetStageBagFilter>]
     [ServiceFilter<ValidationFilter>]
-    public async Task<IActionResult> ExecuteAsync(
-        [FromRoute] [Required] Request request,
-        CancellationToken cancellationToken
-    )
+    public async Task<IActionResult> ExecuteAsync(CancellationToken cancellationToken)
     {
         var appRequest = new AppRequestModel { };
-        
+
         var appResponse = await _service.ExecuteAsync(appRequest, cancellationToken);
 
         var httpResponse = HttpResponseMapper.Get(appRequest, appResponse, HttpContext);

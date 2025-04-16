@@ -3,7 +3,4 @@
 namespace GetUserInformation.Presentation;
 
 [ValidateNever]
-public sealed class Request
-{
-
-}
+public sealed class Request { }
