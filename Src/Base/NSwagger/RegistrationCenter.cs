@@ -69,8 +69,6 @@ internal sealed class RegistrationCenter : IExternalServiceRegister
             config.OperationProcessors.Add(
                 new OperationSecurityScopeProcessor(JWT_BEARER_SCHEME_NAME)
             );
-
-            //config.SchemaSettings.SchemaProcessors.Add(new IgnoreEmptyRequestSchemaProcessor());
         });
 
         return services;
