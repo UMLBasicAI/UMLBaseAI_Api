@@ -45,11 +45,11 @@ public sealed class Endpoint : ControllerBase
     [ServiceFilter<SetStageBagFilter>]
     [ServiceFilter<ValidationFilter>]
     public async Task<IActionResult> ExecuteAsync(
-        [FromQuery] Request request,
+        [FromRoute] Request request,
         CancellationToken cancellationToken
     )
     {
-        var appRequest = new AppRequestModel { };
+        var appRequest = new AppRequestModel { UserId = request.UserId };
 
         var appResponse = await _service.ExecuteAsync(appRequest, cancellationToken);
 

@@ -1,8 +1,8 @@
 ﻿using System.Net.Mime;
 using System.Text.Json;
+using GetUserInformation.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using GetUserInformation.Common;
 
 namespace GetUserInformation.Presentation.Filter.SetStageBag;
 
