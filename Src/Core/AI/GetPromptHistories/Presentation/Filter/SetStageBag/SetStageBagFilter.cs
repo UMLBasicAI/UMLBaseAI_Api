@@ -2,9 +2,9 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using GetSinglePromptHistory.Common;
+using GetPromptHistories.Common;
 
-namespace GetSinglePromptHistory.Presentation.Filter.SetStageBag
+namespace GetPromptHistories.Presentation.Filter.SetStageBag
 {
     public sealed class SetStageBagFilter : IAsyncActionFilter
     {

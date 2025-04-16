@@ -1,4 +1,4 @@
-﻿namespace GetSinglePromptHistory.Presentation.Filter.SetStageBag;
+﻿namespace GetPromptHistories.Presentation.Filter.SetStageBag;
 
 public sealed class StageBag
 {

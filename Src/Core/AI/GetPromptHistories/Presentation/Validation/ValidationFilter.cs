@@ -3,10 +3,10 @@ using System.Text.Json;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using GetSinglePromptHistory.Common;
-using GetSinglePromptHistory.Presentation.Filter.SetStageBag;
+using GetPromptHistories.Common;
+using GetPromptHistories.Presentation.Filter.SetStageBag;
 
-namespace GetSinglePromptHistory.Presentation.Validation;
+namespace GetPromptHistories.Presentation.Validation;
 
 public sealed class ValidationFilter : IAsyncActionFilter
 {

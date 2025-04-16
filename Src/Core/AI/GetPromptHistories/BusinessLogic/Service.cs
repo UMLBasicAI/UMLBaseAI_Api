@@ -1,82 +1,91 @@
-﻿using Base.Gemini.Handler;
-using FCommon.AccessToken;
-using FCommon.Constants;
+﻿using Base.DataBaseAndIdentity.Entities;
+using Base.Gemini.Handler;
 using FCommon.FeatureService;
-using FCommon.RefreshToken;
+using GetPromptHistories.Common;
+using GetPromptHistories.DataAccess;
+using GetPromptHistories.Models;
 using Microsoft.AspNetCore.Http;
-using GetSinglePromptHistory.Common;
-using GetSinglePromptHistory.DataAccess;
-using GetSinglePromptHistory.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace GetSinglePromptHistory.BusinessLogic;
-
-public sealed class Service : IServiceHandler<AppRequestModel, AppResponseModel>
+namespace GetPromptHistories.BusinessLogic
 {
-    private readonly Lazy<IRepository> _repository;
-    private readonly Lazy<IHttpContextAccessor> _httpContextAccessor;
-
-    public Service(
-        Lazy<IRepository> repository,
-        Lazy<IHttpContextAccessor> httpContextAccessor
-    )
+    public sealed class Service : IServiceHandler<AppRequestModel, AppResponseModel>
     {
-        _repository = repository;
-        _httpContextAccessor = httpContextAccessor;
-    }
+        private readonly Lazy<IRepository> _repository;
+        private readonly Lazy<IHttpContextAccessor> _httpContextAccessor;
 
-    public async Task<AppResponseModel> ExecuteAsync(
-    AppRequestModel request,
-    CancellationToken cancellationToken
-)
-    {
-        if (string.IsNullOrWhiteSpace(request.HistoryId) || request.Page <= 0 || request.Size <= 0)
+        public Service(
+            Lazy<IRepository> repository,
+            Lazy<IHttpContextAccessor> httpContextAccessor
+        )
         {
-            return new AppResponseModel
-            {
-                AppCode = Constant.AppCode.VALIDATION_FAILED
-            };
+            _repository = repository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        var userId = _httpContextAccessor.Value.HttpContext.User.FindFirstValue("sub");
-        if (string.IsNullOrWhiteSpace(userId))
+        public async Task<AppResponseModel> ExecuteAsync(
+            AppRequestModel request,
+            CancellationToken cancellationToken
+        )
         {
-            return new AppResponseModel
+            // Kiểm tra tính hợp lệ của yêu cầu
+            if (request.Page <= 0 || request.Size <= 0)
             {
-                AppCode = Constant.AppCode.UNAUTHORIZED
-            };
-        }
-
-        var historyId = Guid.Parse(request.HistoryId);
-        var userGuid = Guid.Parse(userId);
-
-        // Kiểm tra xem lịch sử có tồn tại và thuộc về user không
-        var isOwnedByUser = await _repository.Value.IsHistoryOwnedByUser(historyId, userGuid, cancellationToken);
-        if (!isOwnedByUser)
-        {
-            return new AppResponseModel
-            {
-                AppCode = Constant.AppCode.UNAUTHORIZED
-            };
-        }
-
-        var page = request.Page;
-        var size = request.Size;
-
-        var messages = await _repository.Value.getMessagesByHistoryId(historyId, page, size, cancellationToken);
-        var totalCount = await _repository.Value.countMessagesByHistoryId(historyId, cancellationToken);
-        var totalPages = (int)Math.Ceiling((double)totalCount / size);
-
-        return new AppResponseModel
-        {
-            AppCode = Constant.AppCode.SUCCESS,
-            Body = new AppResponseModel.BodyModel
-            {
-                HistoryId = request.HistoryId,
-                Messages = messages,
-                IsHasNextPage = page < totalPages,
-                IsHasPreviousPage = page > 1
+                return new AppResponseModel
+                {
+                    AppCode = Constant.AppCode.VALIDATION_FAILED
+                };
             }
-        };
+
+            // Lấy thông tin người dùng từ JWT token
+            var userId = _httpContextAccessor.Value.HttpContext.User.FindFirstValue("sub");
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return new AppResponseModel
+                {
+                    AppCode = Constant.AppCode.UNAUTHORIZED
+                };
+            }
+
+            // Lấy thông tin phân trang
+            var page = request.Page;
+            var size = request.Size;
+
+            // Truy vấn các lịch sử của người dùng từ repository
+            var histories = await _repository.Value.GetHistoriesByUserId(userId, page, size, cancellationToken);
+            var totalCount = await _repository.Value.CountHistoriesByUserId(userId, cancellationToken);
+            var totalPages = (int)Math.Ceiling((double)totalCount / size);
+
+            // Lọc bỏ các trường không cần thiết (identityUser, messages) và sắp xếp theo createdAt giảm dần
+            var filteredHistories = histories
+                .Select(h => new HistoryModel()
+                {
+                    Action = h.Action,
+                    PlantUMLCode = h.PlantUMLCode,
+                    UserId = h.UserId,
+                    Id = h.Id,
+                    CreatedAt = h.CreatedAt,
+                    UpdatedAt = h.UpdatedAt
+                })
+                .OrderByDescending(h => h.CreatedAt) // Sắp xếp theo createdAt giảm dần
+                .ToList();
+
+            // Trả về kết quả
+            return new AppResponseModel
+            {
+                AppCode = Constant.AppCode.SUCCESS,
+                Body = new AppResponseModel.BodyModel
+                {
+                    Histories = filteredHistories,
+                    IsHasNextPage = page < totalPages,
+                    IsHasPreviousPage = page > 1
+                }
+            };
+        }
     }
 }

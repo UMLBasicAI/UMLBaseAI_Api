@@ -1,18 +1,15 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Http;
-using GetSinglePromptHistory.Common;
-using GetSinglePromptHistory.Models;
-using GetSinglePromptHistory.Presentation;
-using GetSinglePromptHistory.Presentation.Filter.SetStageBag;
+using GetPromptHistories.Common;
+using GetPromptHistories.Models;
+using GetPromptHistories.Presentation;
+using GetPromptHistories.Presentation.Filter.SetStageBag;
 
-namespace GetSinglePromptHistory.Mapper;
+namespace GetPromptHistories.Mapper;
 
 public static class HttpResponseMapper
 {
-    private static ConcurrentDictionary<
-        Constant.AppCode,
-        Func<AppRequestModel, AppResponseModel, HttpContext, Response>
-    > _httpResponseMapper;
+    private static ConcurrentDictionary<Constant.AppCode, Func<AppRequestModel, AppResponseModel, HttpContext, Response>> _httpResponseMapper;
 
     private static void Init()
     {
@@ -20,6 +17,7 @@ public static class HttpResponseMapper
 
         _httpResponseMapper = new();
 
+        // Mapping for SUCCESS response
         _httpResponseMapper.TryAdd(
             Constant.AppCode.SUCCESS,
             (appRequest, appResponse, httpContext) =>
@@ -30,8 +28,7 @@ public static class HttpResponseMapper
                     AppCode = Constant.AppCode.SUCCESS.ToString(),
                     Body = new Response.BodyDto
                     {
-                        HistoryId = appResponse.Body?.HistoryId,
-                        Messages = appResponse.Body?.Messages,
+                        Histories = appResponse.Body?.Histories,
                         IsHasNextPage = appResponse.Body?.IsHasNextPage ?? false,
                         IsHasPreviousPage = appResponse.Body?.IsHasPreviousPage ?? false
                     }
@@ -39,6 +36,7 @@ public static class HttpResponseMapper
             }
         );
 
+        // Mapping for VALIDATION_FAILED response
         _httpResponseMapper.TryAdd(
             Constant.AppCode.VALIDATION_FAILED,
             (appRequest, appResponse, httpContext) =>
@@ -51,6 +49,7 @@ public static class HttpResponseMapper
             }
         );
 
+        // Mapping for SERVER_ERROR response
         _httpResponseMapper.TryAdd(
             Constant.AppCode.SERVER_ERROR,
             (appRequest, appResponse, httpContext) =>
@@ -63,6 +62,7 @@ public static class HttpResponseMapper
             }
         );
 
+        // Mapping for UNAUTHORIZED response
         _httpResponseMapper.TryAdd(
             Constant.AppCode.UNAUTHORIZED,
             (appRequest, appResponse, httpContext) =>
@@ -75,6 +75,7 @@ public static class HttpResponseMapper
             }
         );
 
+        // Mapping for FORBIDDEN response
         _httpResponseMapper.TryAdd(
             Constant.AppCode.FORBIDDEN,
             (appRequest, appResponse, httpContext) =>
@@ -87,14 +88,15 @@ public static class HttpResponseMapper
             }
         );
 
+        // Mapping for HISTORY_NOT_FOUND response
         _httpResponseMapper.TryAdd(
-            Constant.AppCode.HISTORY_NOT_FOUND,
+            Constant.AppCode.HISTORIES_NOT_FOUND,
             (appRequest, appResponse, httpContext) =>
             {
                 return new Response
                 {
                     HttpCode = StatusCodes.Status404NotFound,
-                    AppCode = Constant.AppCode.HISTORY_NOT_FOUND.ToString()
+                    AppCode = Constant.AppCode.HISTORIES_NOT_FOUND.ToString()
                 };
             }
         );

@@ -1,7 +1,7 @@
 ﻿using Base.Config;
 using FluentValidation;
 
-namespace GetSinglePromptHistory.Presentation.Validation;
+namespace GetPromptHistories.Presentation.Validation;
 
 public sealed class ValidationProfile : AbstractValidator<Request>
 {

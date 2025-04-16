@@ -1,8 +1,8 @@
 ﻿using Base.DataBaseAndIdentity.Entities;
 using FCommon.FeatureService;
-using GetSinglePromptHistory.Common;
+using GetPromptHistories.Common;
 
-namespace GetSinglePromptHistory.Models;
+namespace GetPromptHistories.Models;
 
 public sealed class AppResponseModel : IServiceResponse
 {
@@ -12,8 +12,7 @@ public sealed class AppResponseModel : IServiceResponse
 
     public sealed class BodyModel
     {
-        public string HistoryId { get; set; }
-        public List<MessageEntity> Messages { get; set; }
+        public List<HistoryModel> Histories { get; set; }
 
         public Boolean IsHasNextPage { get; set; }
         public Boolean IsHasPreviousPage { get; set; }

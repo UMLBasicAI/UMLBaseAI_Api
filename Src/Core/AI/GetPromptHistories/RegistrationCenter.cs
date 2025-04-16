@@ -2,10 +2,10 @@
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using GetSinglePromptHistory.BusinessLogic;
-using GetSinglePromptHistory.DataAccess;
+using GetPromptHistories.BusinessLogic;
+using GetPromptHistories.DataAccess;
 
-namespace GetSinglePromptHistory;
+namespace GetPromptHistories;
 
 public class RegistrationCenter : IServiceRegister
 {

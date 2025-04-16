@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Core\AI\GetPromptHistories\GetPromptHistories.csproj" />
     <ProjectReference Include="..\Core\AI\GetSinglePromptHistory\GetSinglePromptHistory.csproj" />
     <ProjectReference Include="..\Core\AI\DeletePromptHistoryById\DeletePromptHistoryById.csproj" />
     <ProjectReference Include="..\Core\AI\PromtToAI\PromptToAI.csproj" />
