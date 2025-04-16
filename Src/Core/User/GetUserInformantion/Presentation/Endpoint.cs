@@ -44,7 +44,10 @@ public sealed class Endpoint : ControllerBase
     [Authorize(Policy = nameof(DefaultAuthorizationRequirement))]
     [ServiceFilter<SetStageBagFilter>]
     [ServiceFilter<ValidationFilter>]
-    public async Task<IActionResult> ExecuteAsync(CancellationToken cancellationToken)
+    public async Task<IActionResult> ExecuteAsync(
+        [FromQuery] Request request,
+        CancellationToken cancellationToken
+    )
     {
         var appRequest = new AppRequestModel { };
 
