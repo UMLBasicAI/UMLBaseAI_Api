@@ -1,42 +1,43 @@
-﻿using System.Data;
-using Base.DataBaseAndIdentity.DBContext;
+﻿using Base.DataBaseAndIdentity.DBContext;
 using Base.DataBaseAndIdentity.Entities;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using GetSinglePromptHistory.Models;
-using static Base.DataBaseAndIdentity.Entities.HistoryEntity.Metadata.Properties;
-using static Base.DataBaseAndIdentity.Entities.MessageEntity.Metadata.Properties;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace GetSinglePromptHistory.DataAccess;
-
-public sealed class Repository : IRepository
+namespace GetPromptHistories.DataAccess
 {
-    private readonly AppDbContext _dbContext;
-
-    public Repository(AppDbContext dbContext)
+    public class Repository : IRepository
     {
-        _dbContext = dbContext;
-    }
+        private readonly AppDbContext _dbContext;
 
-    public async Task<List<MessageEntity>> getMessagesByHistoryId(Guid historyId, int page, int size, CancellationToken cancellationToken)
-    {
-        return await _dbContext.Set<MessageEntity>()
-            .Where(m => m.HistoryId == historyId)
-            .OrderByDescending(m => m.CreatedAt) // hoặc OrderByDescending tùy bạn muốn thứ tự cũ -> mới hay ngược lại
-            .Skip((page - 1) * size)
-            .Take(size)
-            .ToListAsync(cancellationToken);
-    }
+        public Repository(AppDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
-    public async Task<int> countMessagesByHistoryId(Guid historyId, CancellationToken cancellationToken)
-    {
-        return await _dbContext.Set<MessageEntity>()
-            .CountAsync(m => m.HistoryId == historyId, cancellationToken);
-    }
-    public async Task<bool> IsHistoryOwnedByUser(Guid historyId, Guid userId, CancellationToken cancellationToken)
-    {
-        return await _dbContext.Set<HistoryEntity>()
-            .AnyAsync(h => h.Id == historyId && h.UserId == userId, cancellationToken);
-    }
+        public async Task<List<HistoryEntity>> GetHistoriesByUserId(string userId, int page, int size, CancellationToken cancellationToken)
+        {
+            var userGuid = Guid.Parse(userId);
 
+            // Truy vấn các lịch sử của người dùng, có phân trang
+            return await _dbContext.Set<HistoryEntity>()
+                .Where(h => h.UserId == userGuid)
+                .OrderByDescending(h => h.CreatedAt) // Sắp xếp theo thời gian tạo
+                .Skip((page - 1) * size) // Bỏ qua các mục trước đó theo trang
+                .Take(size) // Lấy số lượng theo kích thước trang
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<int> CountHistoriesByUserId(string userId, CancellationToken cancellationToken)
+        {
+            var userGuid = Guid.Parse(userId);
+
+            // Đếm tổng số lịch sử của người dùng
+            return await _dbContext.Set<HistoryEntity>()
+                .Where(h => h.UserId == userGuid)
+                .CountAsync(cancellationToken);
+        }
+    }
 }

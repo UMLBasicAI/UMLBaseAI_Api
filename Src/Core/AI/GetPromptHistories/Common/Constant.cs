@@ -1,35 +1,32 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace GetSinglePromptHistory.Common;
+namespace GetPromptHistories.Common;
 
 public static class Constant
 {
-    public const string CONTROLLER_NAME = "History Endpoint";
-    public const string ENDPOINT_PATH = "/history/{HistoryId:required}";
+    public const string CONTROLLER_NAME = "Get Prompt Histories Endpoint";
+    public const string ENDPOINT_PATH = "/histories"; // Đã loại bỏ HistoryId, chỉ cần UserId
     public const string REQUEST_ARGUMENT_NAME = "request";
 
     public static class DefaultResponse
     {
-        public static class App
-        {
-            public static readonly Models.AppResponseModel VALIDATION_FAILED =
-                new() { AppCode = AppCode.VALIDATION_FAILED };
+        public static readonly Models.AppResponseModel VALIDATION_FAILED =
+            new() { AppCode = AppCode.VALIDATION_FAILED };
 
-            public static readonly Models.AppResponseModel SERVER_ERROR =
-                new() { AppCode = AppCode.SERVER_ERROR };
+        public static readonly Models.AppResponseModel SERVER_ERROR =
+            new() { AppCode = AppCode.SERVER_ERROR };
 
-            public static readonly Models.AppResponseModel UNAUTHORIZED =
-                new() { AppCode = AppCode.UNAUTHORIZED };
+        public static readonly Models.AppResponseModel UNAUTHORIZED =
+            new() { AppCode = AppCode.UNAUTHORIZED };
 
-            public static readonly Models.AppResponseModel FORBIDDEN =
-                new() { AppCode = AppCode.FORBIDDEN };
+        public static readonly Models.AppResponseModel FORBIDDEN =
+            new() { AppCode = AppCode.FORBIDDEN };
 
-            public static readonly Models.AppResponseModel HISTORY_NOT_FOUND =
-                new() { AppCode = AppCode.HISTORY_NOT_FOUND };
+        public static readonly Models.AppResponseModel HISTORIES_NOT_FOUND =
+            new() { AppCode = AppCode.HISTORIES_NOT_FOUND };
 
-            public static readonly Models.AppResponseModel SUCCESS =
-                new() { AppCode = AppCode.SUCCESS };
-        }
+        public static readonly Models.AppResponseModel SUCCESS =
+            new() { AppCode = AppCode.SUCCESS };
     }
 
     public static class Http
@@ -64,10 +61,10 @@ public static class Constant
             AppCode = AppCode.FORBIDDEN.ToString()
         };
 
-        public static readonly Presentation.Response HISTORY_NOT_FOUND = new()
+        public static readonly Presentation.Response HISTORIES_NOT_FOUND = new()
         {
             HttpCode = StatusCodes.Status404NotFound,
-            AppCode = AppCode.HISTORY_NOT_FOUND.ToString()
+            AppCode = AppCode.HISTORIES_NOT_FOUND.ToString()
         };
     }
 
@@ -78,6 +75,6 @@ public static class Constant
         SERVER_ERROR,
         UNAUTHORIZED,
         FORBIDDEN,
-        HISTORY_NOT_FOUND
+        HISTORIES_NOT_FOUND // Thêm mã lỗi cho trường hợp không tìm thấy lịch sử
     }
 }
