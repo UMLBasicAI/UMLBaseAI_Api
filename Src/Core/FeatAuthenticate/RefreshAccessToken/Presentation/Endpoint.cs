@@ -42,7 +42,7 @@ public sealed class Endpoint : ControllerBase
     [ProducesResponseType(1, Type = typeof(Response))]
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
-    [HttpPost(Constant.ENDPOINT_PATH)]
+    [HttpPatch(Constant.ENDPOINT_PATH)]
     [ServiceFilter<SetStageBagFilter>]
     [ServiceFilter<ValidationFilter>]
     public async Task<IActionResult> ExecuteAsync(

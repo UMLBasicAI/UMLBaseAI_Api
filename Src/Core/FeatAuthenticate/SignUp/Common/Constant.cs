@@ -5,7 +5,7 @@ namespace SignUp.Common;
 public static class Constant
 {
     public const string CONTROLLER_NAME = "Authentication Endpoints";
-    public const string ENDPOINT_PATH = "SignUp";
+    public const string ENDPOINT_PATH = "/SignUp";
     public const string REQUEST_ARGUMENT_NAME = "request";
 
     public static class DefaultResponse

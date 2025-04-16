@@ -5,7 +5,7 @@ namespace RefreshAccessToken.Common;
 public static class Constant
 {
     public const string CONTROLLER_NAME = "Authentication Endpoints";
-    public const string ENDPOINT_PATH = "RefreshAccessToken";
+    public const string ENDPOINT_PATH = "/refresh-access-token";
     public const string REQUEST_ARGUMENT_NAME = "request";
 
     public static class APP_USER_REFRESH_TOKEN
