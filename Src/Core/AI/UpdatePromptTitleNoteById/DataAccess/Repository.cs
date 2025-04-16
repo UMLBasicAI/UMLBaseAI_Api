@@ -16,39 +16,54 @@ public sealed class Repository : IRepository
         _appDbContext = appDbContext;
     }
 
-    public async Task<bool> FindAllMessageAndDeleteByHistoryId(Guid historyId, CancellationToken cancellationToken)
+    public async Task<bool> DoesHistoryBelongToUserId(
+        Guid userId,
+        Guid historyId,
+        CancellationToken cancellationToken
+    )
     {
-        var result = false;
-
-        var messageIds = await _appDbContext.Set<MessageEntity>().Where(entity => entity.HistoryId == historyId).Select(entity => entity.Id).ToListAsync(cancellationToken);
-
-        if (messageIds.Any()) {
-            try
-            {
-                var res =  await _appDbContext.Set<MessageEntity>().Where(entity => messageIds.Contains(entity.Id)).ExecuteDeleteAsync(cancellationToken);
-
-
-                result = true;
-            }
-            catch (Exception) {
-                result = false;
-            }
-        }
-
-        return result;
+        return await _appDbContext
+            .Set<HistoryEntity>()
+            .AnyAsync(entity => entity.Id.Equals(historyId) && entity.UserId.Equals(userId));
     }
 
-    public async Task<bool> FindAndDeleteHistoryById(Guid historyId, CancellationToken cancellationToken)
+    public async Task<bool> UpdateHistoryNameById(
+        Guid historyId,
+        string newAction,
+        CancellationToken cancellationToken
+    )
     {
-        var result = true;
-        try
-        {
-            await _appDbContext.Set<HistoryEntity>().Where(entity => entity.Id == historyId).ExecuteDeleteAsync(cancellationToken);
-        }
-        catch (Exception)
-        {
-            result = false;
-        }
-        return result;
+        var dbResult = true;
+
+        await _appDbContext
+            .Database.CreateExecutionStrategy()
+            .ExecuteAsync(async () =>
+            {
+                await using var dbTransaction = await _appDbContext.Database.BeginTransactionAsync(
+                    IsolationLevel.ReadCommitted,
+                    cancellationToken
+                );
+
+                try
+                {
+                    var rowsAffected = await _appDbContext
+                        .Set<HistoryEntity>()
+                        .Where(history => history.Id.Equals(historyId))
+                        .ExecuteUpdateAsync(setProps =>
+                            setProps.SetProperty(entity => entity.Action, newAction)
+                        );
+                    if (rowsAffected == 0)
+                    {
+                        throw new DbUpdateException();
+                    }
+                    await dbTransaction.CommitAsync();
+                }
+                catch (DbUpdateException)
+                {
+                    await dbTransaction.RollbackAsync();
+                    dbResult = false;
+                }
+            });
+        return dbResult;
     }
 }

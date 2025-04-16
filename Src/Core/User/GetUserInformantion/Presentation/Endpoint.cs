@@ -2,16 +2,16 @@
 using System.Net.Mime;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using UpdatePromptTitleNoteById.BusinessLogic;
-using UpdatePromptTitleNoteById.Common;
-using UpdatePromptTitleNoteById.Mapper;
-using UpdatePromptTitleNoteById.Models;
-using UpdatePromptTitleNoteById.Presentation.Filter.SetStageBag;
-using UpdatePromptTitleNoteById.Presentation.Validation;
+using GetUserInformation.BusinessLogic;
+using GetUserInformation.Common;
+using GetUserInformation.Mapper;
+using GetUserInformation.Models;
+using GetUserInformation.Presentation.Filter.SetStageBag;
+using GetUserInformation.Presentation.Validation;
 using FCommon.Authorization;
 using Microsoft.AspNetCore.Authorization;
 
-namespace UpdatePromptTitleNoteById.Presentation;
+namespace GetUserInformation.Presentation;
 
 [Tags(Constant.CONTROLLER_NAME)]
 public sealed class Endpoint : ControllerBase
@@ -39,16 +39,16 @@ public sealed class Endpoint : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(1, Type = typeof(Response))]
     [Produces(MediaTypeNames.Application.Json)]
-    [HttpPatch(Constant.ENDPOINT_PATH)]
+    [HttpGet(Constant.ENDPOINT_PATH)]
     [Authorize(Policy = nameof(DefaultAuthorizationRequirement))]
     [ServiceFilter<SetStageBagFilter>]
     [ServiceFilter<ValidationFilter>]
     public async Task<IActionResult> ExecuteAsync(
-        [FromBody] [Required] Request request,
+        [FromRoute] [Required] Request request,
         CancellationToken cancellationToken
     )
     {
-        var appRequest = new AppRequestModel { HistoryId = request.HistoryId, NewAction = request.NewAction};
+        var appRequest = new AppRequestModel { };
         
         var appResponse = await _service.ExecuteAsync(appRequest, cancellationToken);
 

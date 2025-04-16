@@ -1,11 +1,11 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Http;
-using UpdatePromptTitleNoteById.Common;
-using UpdatePromptTitleNoteById.Models;
-using UpdatePromptTitleNoteById.Presentation;
-using UpdatePromptTitleNoteById.Presentation.Filter.SetStageBag;
+using GetUserInformation.Common;
+using GetUserInformation.Models;
+using GetUserInformation.Presentation;
+using GetUserInformation.Presentation.Filter.SetStageBag;
 
-namespace UpdatePromptTitleNoteById.Mapper;
+namespace GetUserInformation.Mapper;
 
 public static class HttpResponseMapper
 {
@@ -19,12 +19,16 @@ public static class HttpResponseMapper
         if (Equals(_httpResponseMapper, null))
         {
             _httpResponseMapper = new();
-
+         
             _httpResponseMapper.TryAdd(
                 Constant.AppCode.SUCCESS,
                 (appRequest, appResponse, httpContext) =>
                 {
-                    return new() { AppCode = Constant.AppCode.SUCCESS.ToString(), };
+                    return new()
+                    {
+                        AppCode = Constant.AppCode.SUCCESS.ToString(),
+                        Body = appResponse.Body
+                    };
                 }
             );
 
@@ -40,13 +44,6 @@ public static class HttpResponseMapper
                 (appRequest, appResponse, httpContext) =>
                 {
                     return Constant.DefaultResponse.Http.UNAUTHORIZED;
-                }
-            );
-            _httpResponseMapper.TryAdd(
-                Constant.AppCode.NOT_BELONG_TO_USER,
-                (appRequest, appResponse, httpContext) =>
-                {
-                    return Constant.DefaultResponse.Http.NOT_BELONG_TO_USER;
                 }
             );
         }

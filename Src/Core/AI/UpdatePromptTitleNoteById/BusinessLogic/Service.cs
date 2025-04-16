@@ -1,23 +1,21 @@
-﻿using Base.Mail.Handler;
+﻿using System.Security.Claims;
+using Base.Mail.Handler;
 using FCommon.FeatureService;
+using Microsoft.AspNetCore.Http;
 using UpdatePromptTitleNoteById.Common;
 using UpdatePromptTitleNoteById.DataAccess;
 using UpdatePromptTitleNoteById.Models;
-using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 
 namespace UpdatePromptTitleNoteById.BusinessLogic;
 
 public sealed class Service : IServiceHandler<AppRequestModel, AppResponseModel>
 {
     private readonly Lazy<IRepository> _repository;
-    private readonly Lazy<IEmailSendingHandler> _emailSendingHandler;
     private readonly Lazy<IHttpContextAccessor> _httpContextAccessor;
 
-    public Service(Lazy<IRepository> repository, Lazy<IEmailSendingHandler> emailSendingHandler, Lazy<IHttpContextAccessor> httpContextAccessor)
+    public Service(Lazy<IRepository> repository, Lazy<IHttpContextAccessor> httpContextAccessor)
     {
         _repository = repository;
-        _emailSendingHandler = emailSendingHandler;
         _httpContextAccessor = httpContextAccessor;
     }
 
@@ -26,33 +24,30 @@ public sealed class Service : IServiceHandler<AppRequestModel, AppResponseModel>
         CancellationToken cancellationToken
     )
     {
-        //step-1: Found User Id From Http Context
-
         var userId = _httpContextAccessor.Value.HttpContext.User.FindFirstValue(claimType: "sub");
 
-        if (userId == null)
+        var checkHistoryBelongToUser = await _repository.Value.DoesHistoryBelongToUserId(
+            Guid.Parse(userId),
+            Guid.Parse(request.HistoryId),
+            cancellationToken
+        );
+
+        if (!checkHistoryBelongToUser)
         {
-            return new() { AppCode =  Constant.AppCode.UNAUTHORIZED};
+            return new() { AppCode = Constant.AppCode.NOT_BELONG_TO_USER };
         }
 
-        //step-2: Found And Update Prompt Title/Note From History With Id
+        var dbResult = await _repository.Value.UpdateHistoryNameById(
+            Guid.Parse(request.HistoryId),
+            request.NewAction,
+            cancellationToken
+        );
 
-        var deleteMessageBelongToHistoryIdResult = await _repository.Value.FindAllMessageAndDeleteByHistoryId(Guid.Parse(request.HistoryId), cancellationToken);
-
-        if (!deleteMessageBelongToHistoryIdResult)
+        if (!dbResult)
         {
-            return new() { AppCode = Constant.AppCode.SERVER_ERROR };
-        }
-
-        //step-3:Found Update Prompt Title/Note History By Id
-        var deleteHistoryByIdResult = await _repository.Value.FindAndDeleteHistoryById(Guid.Parse(request.HistoryId), cancellationToken);
-
-        if (!deleteHistoryByIdResult)
-        {
-            return new() { AppCode = Constant.AppCode.SERVER_ERROR };
+            return new() { AppCode = Constant.AppCode.SERVER_ERROR, };
         }
 
         return new() { AppCode = Constant.AppCode.SUCCESS };
-
     }
 }

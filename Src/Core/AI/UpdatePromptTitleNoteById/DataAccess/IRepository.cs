@@ -2,8 +2,14 @@
 
 public interface IRepository
 {
-    //async - task
-    Task<bool> FindAllMessageAndDeleteByHistoryId(Guid historyId, CancellationToken cancellationToken);
-
-    Task<bool> FindAndDeleteHistoryById(Guid historyId, CancellationToken cancellationToken);
+    Task<bool> DoesHistoryBelongToUserId(
+        Guid userId,
+        Guid historyId,
+        CancellationToken cancellationToken
+    );
+    Task<bool> UpdateHistoryNameById(
+        Guid historyId,
+        string newAction,
+        CancellationToken cancellationToken
+    );
 }

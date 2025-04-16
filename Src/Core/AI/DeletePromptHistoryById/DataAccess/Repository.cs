@@ -1,9 +1,9 @@
 ﻿using System.Data;
 using Base.DataBaseAndIdentity.DBContext;
 using Base.DataBaseAndIdentity.Entities;
+using DeletePromptHistoryById.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using DeletePromptHistoryById.Models;
 
 namespace DeletePromptHistoryById.DataAccess;
 
@@ -16,21 +16,32 @@ public sealed class Repository : IRepository
         _appDbContext = appDbContext;
     }
 
-    public async Task<bool> FindAllMessageAndDeleteByHistoryId(Guid historyId, CancellationToken cancellationToken)
+    public async Task<bool> FindAllMessageAndDeleteByHistoryId(
+        Guid historyId,
+        CancellationToken cancellationToken
+    )
     {
         var result = false;
 
-        var messageIds = await _appDbContext.Set<MessageEntity>().Where(entity => entity.HistoryId == historyId).Select(entity => entity.Id).ToListAsync(cancellationToken);
+        var messageIds = await _appDbContext
+            .Set<MessageEntity>()
+            .Where(entity => entity.HistoryId == historyId)
+            .Select(entity => entity.Id)
+            .ToListAsync(cancellationToken);
 
-        if (messageIds.Any()) {
+        if (messageIds.Any())
+        {
             try
             {
-                var res =  await _appDbContext.Set<MessageEntity>().Where(entity => messageIds.Contains(entity.Id)).ExecuteDeleteAsync(cancellationToken);
-
+                var res = await _appDbContext
+                    .Set<MessageEntity>()
+                    .Where(entity => messageIds.Contains(entity.Id))
+                    .ExecuteDeleteAsync(cancellationToken);
 
                 result = true;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 result = false;
             }
         }
@@ -38,12 +49,18 @@ public sealed class Repository : IRepository
         return result;
     }
 
-    public async Task<bool> FindAndDeleteHistoryById(Guid historyId, CancellationToken cancellationToken)
+    public async Task<bool> FindAndDeleteHistoryById(
+        Guid historyId,
+        CancellationToken cancellationToken
+    )
     {
         var result = true;
         try
         {
-            await _appDbContext.Set<HistoryEntity>().Where(entity => entity.Id == historyId).ExecuteDeleteAsync(cancellationToken);
+            await _appDbContext
+                .Set<HistoryEntity>()
+                .Where(entity => entity.Id == historyId)
+                .ExecuteDeleteAsync(cancellationToken);
         }
         catch (Exception)
         {

@@ -7,6 +7,6 @@ namespace UpdatePromptTitleNoteById.Presentation;
 [ValidateNever]
 public sealed class Request
 {
-    [FromRoute] //params
     public string HistoryId { get; set; }
+    public string NewAction { get; set; }
 }

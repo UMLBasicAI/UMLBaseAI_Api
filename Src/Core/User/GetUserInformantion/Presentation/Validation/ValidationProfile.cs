@@ -1,7 +1,7 @@
 ﻿using Base.Config;
 using FluentValidation;
 
-namespace UpdatePromptTitleNoteById.Presentation.Validation;
+namespace GetUserInformation.Presentation.Validation;
 
 public sealed class ValidationProfile : AbstractValidator<Request>
 {
@@ -9,8 +9,5 @@ public sealed class ValidationProfile : AbstractValidator<Request>
     {
         ClassLevelCascadeMode = CascadeMode.Stop;
         RuleLevelCascadeMode = CascadeMode.Stop;
-
-        RuleFor(x => x.HistoryId).NotEmpty();
-        RuleFor(x => x.NewAction).NotEmpty();
     }
 }

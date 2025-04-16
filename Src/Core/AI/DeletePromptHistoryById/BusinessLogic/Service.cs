@@ -1,10 +1,10 @@
-﻿using Base.Mail.Handler;
-using FCommon.FeatureService;
+﻿using System.Security.Claims;
+using Base.Mail.Handler;
 using DeletePromptHistoryById.Common;
 using DeletePromptHistoryById.DataAccess;
 using DeletePromptHistoryById.Models;
+using FCommon.FeatureService;
 using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 
 namespace DeletePromptHistoryById.BusinessLogic;
 
@@ -14,7 +14,11 @@ public sealed class Service : IServiceHandler<AppRequestModel, AppResponseModel>
     private readonly Lazy<IEmailSendingHandler> _emailSendingHandler;
     private readonly Lazy<IHttpContextAccessor> _httpContextAccessor;
 
-    public Service(Lazy<IRepository> repository, Lazy<IEmailSendingHandler> emailSendingHandler, Lazy<IHttpContextAccessor> httpContextAccessor)
+    public Service(
+        Lazy<IRepository> repository,
+        Lazy<IEmailSendingHandler> emailSendingHandler,
+        Lazy<IHttpContextAccessor> httpContextAccessor
+    )
     {
         _repository = repository;
         _emailSendingHandler = emailSendingHandler;
@@ -32,12 +36,16 @@ public sealed class Service : IServiceHandler<AppRequestModel, AppResponseModel>
 
         if (userId == null)
         {
-            return new() { AppCode =  Constant.AppCode.UNAUTHORIZED};
+            return new() { AppCode = Constant.AppCode.UNAUTHORIZED };
         }
 
         //step-2: Found And Delete All Message From History With Id
 
-        var deleteMessageBelongToHistoryIdResult = await _repository.Value.FindAllMessageAndDeleteByHistoryId(Guid.Parse(request.HistoryId), cancellationToken);
+        var deleteMessageBelongToHistoryIdResult =
+            await _repository.Value.FindAllMessageAndDeleteByHistoryId(
+                Guid.Parse(request.HistoryId),
+                cancellationToken
+            );
 
         if (!deleteMessageBelongToHistoryIdResult)
         {
@@ -45,7 +53,10 @@ public sealed class Service : IServiceHandler<AppRequestModel, AppResponseModel>
         }
 
         //step-3: Found And Delete History By Id
-        var deleteHistoryByIdResult = await _repository.Value.FindAndDeleteHistoryById(Guid.Parse(request.HistoryId), cancellationToken);
+        var deleteHistoryByIdResult = await _repository.Value.FindAndDeleteHistoryById(
+            Guid.Parse(request.HistoryId),
+            cancellationToken
+        );
 
         if (!deleteHistoryByIdResult)
         {
@@ -53,6 +64,5 @@ public sealed class Service : IServiceHandler<AppRequestModel, AppResponseModel>
         }
 
         return new() { AppCode = Constant.AppCode.SUCCESS };
-
     }
 }
