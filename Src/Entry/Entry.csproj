@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\AI\DeletePromptHistoryById\DeletePromptHistoryById.csproj" />
     <ProjectReference Include="..\Core\AI\PromtToAI\PromptToAI.csproj" />
+    <ProjectReference Include="..\Core\AI\UpdatePromptTitleNoteById\UpdatePromptTitleNoteById.csproj" />
     <ProjectReference Include="..\Core\FCommon\FCommon.csproj" />
     <ProjectReference Include="..\Core\FeatAuthenticate\RefreshAccessToken\RefreshAccessToken.csproj" />
     <ProjectReference Include="..\Core\FeatAuthenticate\SignIn\SignIn.csproj" />
