@@ -2,7 +2,4 @@
 
 namespace GetUserInformation.Models;
 
-public sealed class AppRequestModel : IServiceRequest<AppResponseModel>
-{
-    public bool? FlagEmptyRequest { get; set; }
-}
+public sealed class AppRequestModel : IServiceRequest<AppResponseModel> { }

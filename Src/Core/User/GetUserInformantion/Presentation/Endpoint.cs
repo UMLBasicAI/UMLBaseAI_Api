@@ -43,13 +43,9 @@ public sealed class Endpoint : ControllerBase
     [HttpGet(Constant.ENDPOINT_PATH)]
     [Authorize(Policy = nameof(DefaultAuthorizationRequirement))]
     [ServiceFilter<SetStageBagFilter>]
-    [ServiceFilter<ValidationFilter>]
-    public async Task<IActionResult> ExecuteAsync(
-        [FromRoute] Request request,
-        CancellationToken cancellationToken
-    )
+    public async Task<IActionResult> ExecuteAsync(CancellationToken cancellationToken)
     {
-        var appRequest = new AppRequestModel { FlagEmptyRequest = true };
+        var appRequest = new AppRequestModel { };
 
         var appResponse = await _service.ExecuteAsync(appRequest, cancellationToken);
 
