@@ -4,7 +4,7 @@ namespace GetSinglePromptHistory.Common;
 
 public static class Constant
 {
-    public const string CONTROLLER_NAME = "History Endpoint";
+    public const string CONTROLLER_NAME = "History Endpoints";
     public const string ENDPOINT_PATH = "/history/{HistoryId:required}";
     public const string REQUEST_ARGUMENT_NAME = "request";
 
@@ -34,41 +34,43 @@ public static class Constant
 
     public static class Http
     {
-        public static readonly Presentation.Response SUCCESS = new()
-        {
-            HttpCode = StatusCodes.Status200OK,
-            AppCode = AppCode.SUCCESS.ToString()
-        };
+        public static readonly Presentation.Response SUCCESS =
+            new() { HttpCode = StatusCodes.Status200OK, AppCode = AppCode.SUCCESS.ToString() };
 
-        public static readonly Presentation.Response VALIDATION_FAILED = new()
-        {
-            HttpCode = StatusCodes.Status400BadRequest,
-            AppCode = AppCode.VALIDATION_FAILED.ToString()
-        };
+        public static readonly Presentation.Response VALIDATION_FAILED =
+            new()
+            {
+                HttpCode = StatusCodes.Status400BadRequest,
+                AppCode = AppCode.VALIDATION_FAILED.ToString(),
+            };
 
-        public static readonly Presentation.Response SERVER_ERROR = new()
-        {
-            HttpCode = StatusCodes.Status500InternalServerError,
-            AppCode = AppCode.SERVER_ERROR.ToString()
-        };
+        public static readonly Presentation.Response SERVER_ERROR =
+            new()
+            {
+                HttpCode = StatusCodes.Status500InternalServerError,
+                AppCode = AppCode.SERVER_ERROR.ToString(),
+            };
 
-        public static readonly Presentation.Response UNAUTHORIZED = new()
-        {
-            HttpCode = StatusCodes.Status401Unauthorized,
-            AppCode = AppCode.UNAUTHORIZED.ToString()
-        };
+        public static readonly Presentation.Response UNAUTHORIZED =
+            new()
+            {
+                HttpCode = StatusCodes.Status401Unauthorized,
+                AppCode = AppCode.UNAUTHORIZED.ToString(),
+            };
 
-        public static readonly Presentation.Response FORBIDDEN = new()
-        {
-            HttpCode = StatusCodes.Status403Forbidden,
-            AppCode = AppCode.FORBIDDEN.ToString()
-        };
+        public static readonly Presentation.Response FORBIDDEN =
+            new()
+            {
+                HttpCode = StatusCodes.Status403Forbidden,
+                AppCode = AppCode.FORBIDDEN.ToString(),
+            };
 
-        public static readonly Presentation.Response HISTORY_NOT_FOUND = new()
-        {
-            HttpCode = StatusCodes.Status404NotFound,
-            AppCode = AppCode.HISTORY_NOT_FOUND.ToString()
-        };
+        public static readonly Presentation.Response HISTORY_NOT_FOUND =
+            new()
+            {
+                HttpCode = StatusCodes.Status404NotFound,
+                AppCode = AppCode.HISTORY_NOT_FOUND.ToString(),
+            };
     }
 
     public enum AppCode
@@ -78,6 +80,6 @@ public static class Constant
         SERVER_ERROR,
         UNAUTHORIZED,
         FORBIDDEN,
-        HISTORY_NOT_FOUND
+        HISTORY_NOT_FOUND,
     }
 }
