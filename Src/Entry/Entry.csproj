@@ -22,6 +22,7 @@
     <ProjectReference Include="..\Core\FeatAuthenticate\RefreshAccessToken\RefreshAccessToken.csproj" />
     <ProjectReference Include="..\Core\FeatAuthenticate\SignIn\SignIn.csproj" />
     <ProjectReference Include="..\Core\FeatAuthenticate\SignUp\SignUp.csproj" />
+    <ProjectReference Include="..\Core\User\GetUserInformantion\GetUserInformation.csproj" />
   </ItemGroup>
 
   <ItemGroup>
