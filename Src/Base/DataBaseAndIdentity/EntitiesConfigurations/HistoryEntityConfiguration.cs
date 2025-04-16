@@ -15,8 +15,7 @@ public class HistoryEntityConfiguration : IEntityTypeConfiguration<HistoryEntity
         builder
             .Property(entity => entity.Action)
             .HasColumnName(HistoryEntity.Metadata.Properties.Action.ColumnName)
-            .HasColumnType(Constant.DatabaseType.VARCHAR)
-            .HasMaxLength(HistoryEntity.Metadata.Properties.Action.MaxLength)
+            .HasColumnType(Constant.DatabaseType.TEXT)
             .IsRequired(HistoryEntity.Metadata.Properties.Action.IsNotNull);
 
         builder
