@@ -79,21 +79,9 @@ jobs:
             apt-get update && apt-get install -y openssh-client
 
       - run:
-          name: Check and install .NET on VPS
+          name: Save appsettings to local file
           command: |
-            ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 \<< EOF
-              if ! command -v dotnet &> /dev/null; then
-                echo ".NET not found. Installing .NET SDK and Runtime..."
-                wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-                sudo dpkg -i packages-microsoft-prod.deb
-                rm packages-microsoft-prod.deb
-                sudo apt-get update
-                sudo apt-get install -y dotnet-sdk-8.0 aspnetcore-runtime-8.0
-              else
-                echo ".NET is already installed:"
-                dotnet --info
-              fi
-            EOF
+            echo "$appsettings" > ./appsettings.<< parameters.env >>.json
 
       - run:
           name: Create app directory on VPS
@@ -101,6 +89,11 @@ jobs:
             ssh -o StrictHostKeyChecking=no adminplantuml@20.189.124.231 \<< EOF
               mkdir -p << parameters.path >>
             EOF
+
+      - run:
+          name: Copy appsettings file to VPS
+          command: |
+            scp -o StrictHostKeyChecking=no ./appsettings.<< parameters.env >>.json adminplantuml@20.189.124.231:<< parameters.path >>/appsettings.<< parameters.env >>.json
 
       - run:
           name: Copy publish files to VPS
@@ -132,7 +125,7 @@ workflows:
           name: deploy-production
           requires:
             - build
-          env: production
+          env: Production
           path: /home/adminplantuml/apps/umlbasicaiapi/production
           service_name: umlbasicaiapi
           filters:
@@ -143,7 +136,7 @@ workflows:
           name: deploy-development
           requires:
             - build
-          env: development
+          env: Development
           path: /home/adminplantuml/apps/umlbasicaiapi/development
           service_name: umlbasicaiapi-development
           filters:
@@ -154,7 +147,7 @@ workflows:
           name: deploy-tst
           requires:
             - build
-          env: tst
+          env: Testing
           path: /home/adminplantuml/apps/umlbasicaiapi/tst
           service_name: umlbasicaiapi-tst
           filters:
