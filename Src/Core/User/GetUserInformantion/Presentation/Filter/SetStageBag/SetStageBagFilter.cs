@@ -30,9 +30,7 @@ public sealed class SetStageBagFilter : IAsyncActionFilter
 
         var stageBag = new StageBag
         {
-            HttpRequest =
-                context.ActionArguments[Constant.REQUEST_ARGUMENT_NAME] as Request
-                ?? throw new InvalidOperationException("Request is missing!!!"),
+            HttpRequest = context.ActionArguments[Constant.REQUEST_ARGUMENT_NAME] as Request,
         };
 
         context.HttpContext.Items.Add(nameof(StageBag), stageBag);
