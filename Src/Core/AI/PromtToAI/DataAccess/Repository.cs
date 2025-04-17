@@ -69,4 +69,19 @@ public sealed class Repository : IRepository
         return true;
     }
 
+    public async Task<List<MessageEntity>> getNewestMessagesOfHistory(Guid historyId, CancellationToken c)
+    {
+        return await _appDbContext.Set<MessageEntity>()
+            .Where(m => m.HistoryId == historyId)
+            .OrderByDescending(m => m.CreatedAt)
+            .Take(10)
+            .ToListAsync(c);
+    }
+
+    public async Task<HistoryEntity> getHistoryById(Guid historyId, CancellationToken c)
+    {
+        return await _appDbContext.Set<HistoryEntity>()
+            .FirstOrDefaultAsync(h => h.Id == historyId, c);
+    }
+
 }
