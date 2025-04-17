@@ -18,35 +18,59 @@ public sealed class Repository : IRepository
         _appDbContext = appDbContext;
     }
 
-    public async Task<Guid> createAnHistory(string action, string? plantUml, Guid userId, CancellationToken c)
+    public async Task<Guid> createAnHistory(
+        string action,
+        string? plantUml,
+        Guid userId,
+        CancellationToken c
+    )
     {
-        var user = await _appDbContext.Set<IdentityUserEntity>().FindAsync(new object[] { userId }, c);
+        var user = await _appDbContext
+            .Set<IdentityUserEntity>()
+            .FindAsync(new object[] { userId }, c);
 
         if (user == null)
             throw new Exception("User not found.");
 
-        var result = await _appDbContext.Set<HistoryEntity>().AddAsync(new HistoryEntity()
-        {
-            Id = Guid.NewGuid(),
-            Action = action,
-            PlantUMLCode = plantUml,
-            UserId = userId,
-        }, c);
+        var result = await _appDbContext
+            .Set<HistoryEntity>()
+            .AddAsync(
+                new HistoryEntity()
+                {
+                    Id = Guid.NewGuid(),
+                    Action = action,
+                    PlantUMLCode = plantUml,
+                    UserId = userId,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                },
+                c
+            );
         await _appDbContext.SaveChangesAsync(c);
         return result.Entity.Id;
     }
 
-    public async Task<bool> saveMessageToHistory(Guid historyId, string content, string type, CancellationToken c)
+    public async Task<bool> saveMessageToHistory(
+        Guid historyId,
+        string content,
+        string type,
+        CancellationToken c
+    )
     {
-        await _appDbContext.Set<MessageEntity>().AddAsync(new MessageEntity
-        {
-            Id = Guid.NewGuid(),
-            HistoryId = historyId,
-            Content = content,
-            MessageType = type,
-            SentAt = DateTime.UtcNow.ToString(),
-            CreatedAt = DateTime.UtcNow
-        }, c);
+        await _appDbContext
+            .Set<MessageEntity>()
+            .AddAsync(
+                new MessageEntity
+                {
+                    Id = Guid.NewGuid(),
+                    HistoryId = historyId,
+                    Content = content,
+                    MessageType = type,
+                    SentAt = DateTime.UtcNow.ToString(),
+                    CreatedAt = DateTime.UtcNow,
+                },
+                c
+            );
 
         await _appDbContext.SaveChangesAsync(c);
 
@@ -55,8 +79,9 @@ public sealed class Repository : IRepository
 
     public async Task<bool> updateHistory(string? plantUml, Guid historyId, CancellationToken c)
     {
-        var history = await _appDbContext.Set<HistoryEntity>()
-        .FirstOrDefaultAsync(h => h.Id == historyId, c);
+        var history = await _appDbContext
+            .Set<HistoryEntity>()
+            .FirstOrDefaultAsync(h => h.Id == historyId, c);
 
         if (history == null)
         {
@@ -68,5 +93,4 @@ public sealed class Repository : IRepository
         await _appDbContext.SaveChangesAsync(c);
         return true;
     }
-
 }
