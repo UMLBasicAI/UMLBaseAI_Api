@@ -93,11 +93,14 @@ public sealed class Repository : IRepository
         await _appDbContext.SaveChangesAsync(c);
         return true;
     }
-<<<<<<< HEAD
 
-    public async Task<List<MessageEntity>> getNewestMessagesOfHistory(Guid historyId, CancellationToken c)
+    public async Task<List<MessageEntity>> getNewestMessagesOfHistory(
+        Guid historyId,
+        CancellationToken c
+    )
     {
-        return await _appDbContext.Set<MessageEntity>()
+        return await _appDbContext
+            .Set<MessageEntity>()
             .Where(m => m.HistoryId == historyId)
             .OrderByDescending(m => m.CreatedAt)
             .Take(10)
@@ -106,10 +109,8 @@ public sealed class Repository : IRepository
 
     public async Task<HistoryEntity> getHistoryById(Guid historyId, CancellationToken c)
     {
-        return await _appDbContext.Set<HistoryEntity>()
+        return await _appDbContext
+            .Set<HistoryEntity>()
             .FirstOrDefaultAsync(h => h.Id == historyId, c);
     }
-
-=======
->>>>>>> a3bc0813f777977c3d674c68ba5892a552f38068
 }
