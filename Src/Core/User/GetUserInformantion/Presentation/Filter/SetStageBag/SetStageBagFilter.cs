@@ -1,8 +1,8 @@
 ﻿using System.Net.Mime;
 using System.Text.Json;
+using GetUserInformation.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using GetUserInformation.Common;
 
 namespace GetUserInformation.Presentation.Filter.SetStageBag;
 
@@ -13,29 +13,17 @@ public sealed class SetStageBagFilter : IAsyncActionFilter
         ActionExecutionDelegate next
     )
     {
-        var doesRequestExist = context.ActionArguments.Any(argument =>
-            argument.Key.Equals(Constant.REQUEST_ARGUMENT_NAME)
-        );
+        var stageBag = new StageBag();
 
-        if (!doesRequestExist)
+        if (
+            context.ActionArguments.TryGetValue(Constant.REQUEST_ARGUMENT_NAME, out var requestObj)
+            && requestObj is Request request
+        )
         {
-            context.Result = new ContentResult
-            {
-                StatusCode = Constant.DefaultResponse.Http.VALIDATION_FAILED.HttpCode,
-                Content = JsonSerializer.Serialize(Constant.DefaultResponse.Http.VALIDATION_FAILED),
-                ContentType = MediaTypeNames.Application.Json,
-            };
-            return;
+            stageBag.HttpRequest = request;
         }
 
-        var stageBag = new StageBag
-        {
-            HttpRequest =
-                context.ActionArguments[Constant.REQUEST_ARGUMENT_NAME] as Request
-                ?? throw new InvalidOperationException("Request is missing!!!"),
-        };
-
-        context.HttpContext.Items.Add(nameof(StageBag), stageBag);
+        context.HttpContext.Items[nameof(StageBag)] = stageBag;
 
         await next();
     }

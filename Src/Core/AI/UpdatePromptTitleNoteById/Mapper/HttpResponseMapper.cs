@@ -24,7 +24,11 @@ public static class HttpResponseMapper
                 Constant.AppCode.SUCCESS,
                 (appRequest, appResponse, httpContext) =>
                 {
-                    return new() { AppCode = Constant.AppCode.SUCCESS.ToString(), };
+                    return new()
+                    {
+                        HttpCode = StatusCodes.Status200OK,
+                        AppCode = Constant.AppCode.SUCCESS.ToString(),
+                    };
                 }
             );
 

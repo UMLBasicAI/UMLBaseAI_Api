@@ -1,10 +1,10 @@
 ﻿using System.Net.Mime;
 using System.Text.Json;
 using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using GetUserInformation.Common;
 using GetUserInformation.Presentation.Filter.SetStageBag;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace GetUserInformation.Presentation.Validation;
 

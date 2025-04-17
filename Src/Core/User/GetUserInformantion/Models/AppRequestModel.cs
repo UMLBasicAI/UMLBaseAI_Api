@@ -2,6 +2,4 @@
 
 namespace GetUserInformation.Models;
 
-public sealed class AppRequestModel : IServiceRequest<AppResponseModel>
-{
-}
+public sealed class AppRequestModel : IServiceRequest<AppResponseModel> { }
