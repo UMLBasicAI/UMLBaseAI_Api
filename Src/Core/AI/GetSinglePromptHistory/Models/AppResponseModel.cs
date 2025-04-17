@@ -14,7 +14,7 @@ public sealed class AppResponseModel : IServiceResponse
     {
         public string HistoryId { get; set; }
         public List<MessageEntity> Messages { get; set; }
-
+        public string LastPlantUmlCode { get; set; }
         public Boolean IsHasNextPage { get; set; }
         public Boolean IsHasPreviousPage { get; set; }
     }

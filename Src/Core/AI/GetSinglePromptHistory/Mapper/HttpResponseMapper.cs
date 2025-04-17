@@ -1,9 +1,9 @@
 ﻿using System.Collections.Concurrent;
-using Microsoft.AspNetCore.Http;
 using GetSinglePromptHistory.Common;
 using GetSinglePromptHistory.Models;
 using GetSinglePromptHistory.Presentation;
 using GetSinglePromptHistory.Presentation.Filter.SetStageBag;
+using Microsoft.AspNetCore.Http;
 
 namespace GetSinglePromptHistory.Mapper;
 
@@ -16,7 +16,8 @@ public static class HttpResponseMapper
 
     private static void Init()
     {
-        if (_httpResponseMapper != null) return;
+        if (_httpResponseMapper != null)
+            return;
 
         _httpResponseMapper = new();
 
@@ -32,9 +33,10 @@ public static class HttpResponseMapper
                     {
                         HistoryId = appResponse.Body?.HistoryId,
                         Messages = appResponse.Body?.Messages,
+                        LastPlantUmlCode = appResponse.Body?.LastPlantUmlCode,
                         IsHasNextPage = appResponse.Body?.IsHasNextPage ?? false,
-                        IsHasPreviousPage = appResponse.Body?.IsHasPreviousPage ?? false
-                    }
+                        IsHasPreviousPage = appResponse.Body?.IsHasPreviousPage ?? false,
+                    },
                 };
             }
         );
@@ -46,7 +48,7 @@ public static class HttpResponseMapper
                 return new Response
                 {
                     HttpCode = StatusCodes.Status400BadRequest,
-                    AppCode = Constant.AppCode.VALIDATION_FAILED.ToString()
+                    AppCode = Constant.AppCode.VALIDATION_FAILED.ToString(),
                 };
             }
         );
@@ -58,7 +60,7 @@ public static class HttpResponseMapper
                 return new Response
                 {
                     HttpCode = StatusCodes.Status500InternalServerError,
-                    AppCode = Constant.AppCode.SERVER_ERROR.ToString()
+                    AppCode = Constant.AppCode.SERVER_ERROR.ToString(),
                 };
             }
         );
@@ -70,7 +72,7 @@ public static class HttpResponseMapper
                 return new Response
                 {
                     HttpCode = StatusCodes.Status401Unauthorized,
-                    AppCode = Constant.AppCode.UNAUTHORIZED.ToString()
+                    AppCode = Constant.AppCode.UNAUTHORIZED.ToString(),
                 };
             }
         );
@@ -82,7 +84,7 @@ public static class HttpResponseMapper
                 return new Response
                 {
                     HttpCode = StatusCodes.Status403Forbidden,
-                    AppCode = Constant.AppCode.FORBIDDEN.ToString()
+                    AppCode = Constant.AppCode.FORBIDDEN.ToString(),
                 };
             }
         );
@@ -94,7 +96,7 @@ public static class HttpResponseMapper
                 return new Response
                 {
                     HttpCode = StatusCodes.Status404NotFound,
-                    AppCode = Constant.AppCode.HISTORY_NOT_FOUND.ToString()
+                    AppCode = Constant.AppCode.HISTORY_NOT_FOUND.ToString(),
                 };
             }
         );
