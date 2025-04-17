@@ -34,7 +34,7 @@ public class GeminiService : IGeminiService
                     type = "object",
                     properties = new
                     {
-                        response_text = new { type = "string", description = "Phản hồi từ AI về tình trạng của bệnh nhân" },
+                        response_text = new { type = "string", description = "Phản hồi từ AI về prompt của người dùng. Phân tích sơ đồ UML vừa tạo ra" },
                         planUML = new { type = "string", description = "Đây là phần plant UML code để vẽ diagram theo yêu cầu người dùng" }
                     },
                     required = new[] { "response_text", "planUML" }

@@ -11,4 +11,7 @@ public interface IRepository
     Task<Guid> createAnHistory(string action, string? plantUml, Guid userId, CancellationToken c);
     Task<bool> saveMessageToHistory(Guid historyId, string content, string type, CancellationToken c);
     Task<bool> updateHistory(string? plantUml, Guid historyId, CancellationToken c);
+    Task<List<MessageEntity>> getNewestMessagesOfHistory(Guid historyId, CancellationToken c);
+    Task<HistoryEntity> getHistoryById(Guid historyId, CancellationToken c);
+
 }
