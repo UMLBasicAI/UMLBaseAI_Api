@@ -1,6 +1,6 @@
-﻿using Base.Config;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
+using Base.Config;
 
 namespace Base.Gemini.Handler;
 
@@ -24,7 +24,7 @@ public class GeminiService : IGeminiService
             contents = messages.Select(m => new
             {
                 role = m.Role,
-                parts = m.Parts.Select(p => new { text = p.text })
+                parts = m.Parts.Select(p => new { text = p.text }),
             }),
             generationConfig = new
             {
@@ -34,12 +34,20 @@ public class GeminiService : IGeminiService
                     type = "object",
                     properties = new
                     {
-                        response_text = new { type = "string", description = "Phản hồi từ AI về tình trạng của bệnh nhân" },
-                        planUML = new { type = "string", description = "Đây là phần plant UML code để vẽ diagram theo yêu cầu người dùng" }
+                        response_text = new
+                        {
+                            type = "string",
+                            description = "AI's response to the user's prompt. Analyze the generated UML diagram.",
+                        },
+                        planUML = new
+                        {
+                            type = "string",
+                            description = "This is the PlantUML code to draw the diagram according to the user's request - ensure the code of PlantUML is correct to render the diagram properly.",
+                        },
                     },
-                    required = new[] { "response_text", "planUML" }
-                }
-            }
+                    required = new[] { "response_text", "planUML" },
+                },
+            },
         };
 
         var jsonContent = new StringContent(
@@ -57,7 +65,7 @@ public class GeminiService : IGeminiService
 
             if (wrapper?.candidates?.Count > 0)
             {
-                var jsonText = wrapper.candidates[0].content.parts[0].text ;
+                var jsonText = wrapper.candidates[0].content.parts[0].text;
 
                 // Lúc này jsonText vẫn là string chứa JSON, nên deserialize lần 2
                 var finalResponse = JsonSerializer.Deserialize<GeminiResponse>(jsonText);
