@@ -30,7 +30,7 @@ internal sealed class RegistrationCenter : IExternalServiceRegister
         {
             return new HttpClientHandler
             {
-                Proxy = new WebProxy("http://20.84.44.128:3128"),
+                Proxy = new WebProxy("http://14.225.253.112:3128"),
                 UseProxy = true
             };
         });
