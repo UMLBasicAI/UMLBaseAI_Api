@@ -8,16 +8,20 @@ public class GeminiService : IGeminiService
 {
     private readonly HttpClient _httpClient;
     private readonly GeminiOption _options;
+    private int count;
 
     public GeminiService(HttpClient httpClient, GeminiOption options)
     {
         _httpClient = httpClient;
         _options = options;
+        this.count = 0;
     }
 
     public async Task<GeminiResponse> PostAnswerAsync(List<MessageType> messages)
     {
-        var url = $"?key={_options.ApiKey}";
+        this.count = (this.count + 1) % _options.ApiKeys.Count;
+
+        var url = $"?key={_options.ApiKeys[this.count]}";
 
         var requestBody = new
         {
@@ -75,7 +79,6 @@ public class GeminiService : IGeminiService
                 }
             }
         }
-
         return null;
     }
 }
