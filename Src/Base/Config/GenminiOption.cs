@@ -3,7 +3,7 @@
 public class GeminiOption
 {
     public string Endpoint { get; set; } = default!;
-    public string ApiKey { get; set; } = default!;
+    public List<string> ApiKeys { get; set; } = default!;
 }
 
 public class MessageType
